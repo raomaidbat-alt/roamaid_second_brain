@@ -7,8 +7,8 @@
 - Сервер 2: 2.27.36.182 — Telegram бот + агенты
 
 ## Главные файлы
-- /root/bot.py — Telegram бот (676 строк)
-- /root/audit_agent.py — аудит агент (682 строки)
+- /root/bot.py — Telegram бот
+- /root/audit_agent.py — аудит агент
 - /root/skills/ — все скиллы
 - /root/brain/ — память и уроки
 
@@ -16,7 +16,6 @@
 - [ ] Threads analyzer скилл
 - [ ] Carousel generator + Playwright
 - [ ] /learn команда в боте
-- [ ] GitHub push
 
 ## Стек
 Gemini 2.0 Flash, instagrapi, yt-dlp, Whisper, Google Sheets, Telegram Bot API
