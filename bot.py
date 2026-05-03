@@ -26,6 +26,15 @@ from telegram.ext import (
 from audit_agent import run_audit, run_audit_sites, get_ab_stats_text
 import daily_logger
 from skills.learn_from_video.skill import learn_from_video
+try:
+    from skills.generate_thread.skill import (
+        generate_thread as adaptive_generate_thread,
+        record_thread_win,
+    )
+except Exception as e:
+    print(f"Adaptive thread skill unavailable: {e}")
+    adaptive_generate_thread = None
+    record_thread_win = None
 
 OWNER_CHAT_ID = None
 
@@ -160,6 +169,12 @@ def _load_feedback_stats() -> str:
 
 
 def generate_thread(data: dict) -> list:
+    if adaptive_generate_thread is not None:
+        try:
+            return adaptive_generate_thread(data)
+        except Exception as e:
+            print(f"Adaptive thread generation failed, fallback to legacy prompt: {e}")
+
     content = data.get("content", data)
     transcript = content.get("transcript") or data.get("transcript") or ""
     meta = data.get("meta", {})
@@ -468,6 +483,7 @@ async def handle_thread_pick(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
     context.user_data["chosen_hook"] = hook_type
     context.user_data["last_thread"] = posts[0] if posts else ""
+    context.user_data["last_thread_posts"] = posts
 
     await query.edit_message_text(f"Отправляю тред — формат {hook_type}...")
 
@@ -499,6 +515,22 @@ async def handle_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     rating_emoji = "👍" if rating == "good" else "👎"
 
     save_feedback(url, rating, hook_type, thread_preview)
+
+    if rating == "good" and record_thread_win is not None:
+        try:
+            record_thread_win(
+                source=url,
+                hook_type=hook_type,
+                winning_hook=thread_preview,
+                why_it_worked="Хозяин отметил вариант как зашедший через Telegram feedback 👍.",
+                reusable_rule=(
+                    f"Усиливать формат {hook_type}: сохранять похожую механику крючка, "
+                    "конкретику и структуру победившего треда."
+                ),
+                prompt_change="Добавлять этот победивший паттерн в память и учитывать при следующих генерациях.",
+            )
+        except Exception as e:
+            print(f"Thread win memory write error: {e}")
 
     if url:
         try:
