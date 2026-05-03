@@ -26,6 +26,8 @@ from telegram.ext import (
 from audit_agent import run_audit, run_audit_sites, get_ab_stats_text
 import daily_logger
 from skills.learn_from_video.skill import learn_from_video
+from skills.analyze_threads.skill import analyze_threads
+from skills.post_to_threads.skill import post_to_threads, post_thread_series
 try:
     from skills.generate_thread.skill import (
         generate_thread as adaptive_generate_thread,
@@ -377,9 +379,28 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text(result[i:i+4000], parse_mode="Markdown")
         return
 
+    threads_match = re.search(r'(https?://(?:www\.)?threads\.net/@[\w./\-]+)', text)
+    if threads_match:
+        url = threads_match.group(1)
+        await update.message.reply_text("⏳ Анализирую Threads, подожди...")
+        result = await analyze_threads(url)
+        for i in range(0, len(result), 4000):
+            await update.message.reply_text(result[i:i+4000])
+        adapted_match = re.search(r'АДАПТАЦИЯ ДЛЯ НАШЕЙ НИШИ:\n(.*)', result, re.DOTALL)
+        if adapted_match:
+            context.user_data["pending_thread_text"] = adapted_match.group(1).strip()
+            keyboard = InlineKeyboardMarkup([[
+                InlineKeyboardButton("✅ Опубликовать тред", callback_data="threads_publish_confirm"),
+                InlineKeyboardButton("❌ Не публиковать", callback_data="threads_publish_cancel"),
+            ]])
+            await update.message.reply_text(
+                "Опубликовать адаптированный тред в Threads?", reply_markup=keyboard
+            )
+        return
+
     if not any(x in text for x in ["instagram.com", "youtube.com", "youtu.be"]):
         await update.message.reply_text(
-            "Скинь ссылку на Instagram Reels или YouTube видео."
+            "Скинь ссылку на Instagram Reels, YouTube или Threads."
         )
         return
 
@@ -608,6 +629,68 @@ async def handle_audit_sites(update: Update, context: ContextTypes.DEFAULT_TYPE)
         "Отчёт буду присылать каждые 3 сайта."
     )
 
+async def handle_analyze_threads(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    args = context.args
+    if not args:
+        await update.message.reply_text(
+            "Укажи ссылку или аккаунт:\n"
+            "/analyze_threads https://www.threads.net/@username\n"
+            "/analyze_threads https://www.threads.net/@user/post/CODE\n"
+            "/analyze_threads @username"
+        )
+        return
+    target = args[0]
+    await update.message.reply_text("⏳ Анализирую Threads, подожди...")
+    result = await analyze_threads(target)
+    for i in range(0, len(result), 4000):
+        await update.message.reply_text(result[i:i+4000])
+
+    # Offer to post the adapted thread
+    adapted_match = re.search(r'АДАПТАЦИЯ ДЛЯ НАШЕЙ НИШИ:\n(.*)', result, re.DOTALL)
+    if adapted_match:
+        context.user_data["pending_thread_text"] = adapted_match.group(1).strip()
+        keyboard = InlineKeyboardMarkup([[
+            InlineKeyboardButton("✅ Опубликовать тред", callback_data="threads_publish_confirm"),
+            InlineKeyboardButton("❌ Не публиковать", callback_data="threads_publish_cancel"),
+        ]])
+        await update.message.reply_text("Опубликовать адаптированный тред в Threads?", reply_markup=keyboard)
+
+
+async def handle_threads_publish(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    if query.data == "threads_publish_cancel":
+        await query.edit_message_text("❌ Публикация отменена.")
+        return
+
+    thread_text = context.user_data.get("pending_thread_text", "")
+    if not thread_text:
+        await query.edit_message_text("❌ Нет текста для публикации.")
+        return
+
+    await query.edit_message_text("⏳ Публикую тред в Threads...")
+
+    # Split by --- into individual posts
+    posts = [p.strip() for p in re.split(r'\n---\n', thread_text) if p.strip()]
+
+    if len(posts) > 1:
+        result = await post_thread_series(posts)
+        if result["ok"]:
+            urls = "\n".join(f"• {u}" for u in result["urls"] if u)
+            await query.message.reply_text(f"✅ Тред опубликован ({len(posts)} постов)!\n\n{urls}")
+        else:
+            await query.message.reply_text(f"❌ Ошибка публикации: {result['error']}")
+    else:
+        result = await post_to_threads(thread_text)
+        if result["ok"]:
+            await query.message.reply_text(f"✅ Пост опубликован!\n{result['url']}")
+        else:
+            await query.message.reply_text(f"❌ Ошибка публикации: {result['error']}")
+
+    context.user_data.pop("pending_thread_text", None)
+
+
 async def handle_learn(update: Update, context: ContextTypes.DEFAULT_TYPE):
     args = context.args
     if not args:
@@ -697,37 +780,11 @@ async def main():
     app.add_handler(CommandHandler("audit", handle_audit))
     app.add_handler(CommandHandler("audit_sites", handle_audit_sites))
     app.add_handler(CommandHandler("learn", handle_learn))
+    app.add_handler(CommandHandler("analyze_threads", handle_analyze_threads))
     app.add_handler(CommandHandler("stats", handle_stats))
     app.add_handler(CommandHandler("log", handle_log))
     app.add_handler(MessageHandler(filters.VOICE, handle_voice))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     app.add_handler(CallbackQueryHandler(handle_thread_pick, pattern="^thread_pick_"))
-    app.add_handler(CallbackQueryHandler(handle_feedback, pattern="^feedback_"))
-
-    web_app = aiohttp.web.Application()
-    web_app.router.add_get("/zvonok-webhook", handle_zvonok)
-    runner = aiohttp.web.AppRunner(web_app)
-    await runner.setup()
-    site = aiohttp.web.TCPSite(runner, "0.0.0.0", 8080)
-    await site.start()
-    print("Webhook сервер запущен на порту 8080")
-
-    await app.initialize()
-    await app.start()
-    await app.updater.start_polling()
-    print("Бот запущен. Ctrl+C для остановки.")
-
-    try:
-        while True:
-            await asyncio.sleep(3600)
-    finally:
-        await runner.cleanup()
-        await app.updater.stop()
-        await app.stop()
-        await app.shutdown()
-
-
-app = None
-
-if __name__ == "__main__":
-    asyncio.run(main())
+    app.add_handler(CallbackQueryHandler(handle_threads_publish, pattern="^threads_publish_"))
+    app.add_handle

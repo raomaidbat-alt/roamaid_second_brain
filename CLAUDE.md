@@ -40,13 +40,17 @@ ID: 1nqBnh8WcEyb9i5B_kt9YmSkQLoBOY-pSnwqE3CJNUuo
 - Telegram Bot API — интерфейс
 
 ## Что нужно построить (приоритет по порядку)
-1. [ ] /root/skills/analyze_threads/ — анализ вирусных тредов
-   - Использует Danie1/threads-api (уже установлен, threads_api 1.2.0)
-   - Парсит пост или аккаунт → лайки, репосты, текст
-   - Gemini анализирует: крючок, психология, структура, почему залетел
-   - Возвращает адаптированную версию треда
+1. [x] /root/skills/analyze_threads/ — анализ вирусных тредов ✅
+   - Команда: /analyze_threads @username или URL поста
+   - Требует: THREADS_USERNAME + THREADS_PASSWORD в окружении
+   - Возвращает анализ + адаптированный тред + кнопку публикации
 
-2. [ ] /root/skills/carousel_generator/ — генерация каруселей
+2. [x] /root/skills/post_to_threads/ — публикация в Threads ✅
+   - Требует: THREADS_USERNAME + THREADS_PASSWORD в окружении
+   - post_to_threads(text) — один пост
+   - post_thread_series(posts) — тред как серия ответов
+
+3. [ ] /root/skills/carousel_generator/ — генерация каруселей
    - Gemini генерирует текст слайдов
    - Playwright рендерит HTML → PNG (Chromium нужно установить)
    - Telegram показывает превью → хозяин одобряет → публикует в Threads
