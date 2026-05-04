@@ -1,19 +1,19 @@
-### Статус: 04.05.2026 19:02
+### Статус: 04.05.2026 19:06
 ```markdown
 **Что работает:**
-*   **AI-агент Roamaid Second Brain:** Ядро системы (Telegram бот `/root/bot.py`, Instagram аудит `/root/audit_agent.py`).
-*   **Скиллы:** Анализ YouTube/Instagram роликов, генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), полный аудит Instagram, аудит сайтов, обучение из YouTube (`/learn`). Недавно завершены: анализ вирусных тредов (`/root/skills/analyze_threads/`), публикация в Threads (`/root/skills/post_to_threads/`).
-*   **Команды бота:** `/audit @username`, `/audit_sites`, `/stats`, `/log`, `/learn [youtube url]`.
-*   **Интеграции:** Gemini 2.0 Flash, instagrapi, yt-dlp + Whisper, Google Sheets API (ID `1nqBnh8WCEyb...`), Telegram Bot API. Zvonok.com webhook (порт 8081).
+*   **Roamaid Second Brain:** Автономный AI-агент для роста в соцсетях через Telegram бот (`/root/bot.py`) и Instagram аудит (`/root/audit_agent.py`).
+*   **Скиллы:** Анализ YouTube/Instagram роликов, генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), полный аудит Instagram/сайтов, обучение из YouTube (`/learn`). **Недавно завершены:** анализ вирусных тредов, публикация в Threads.
+*   **Команды бота:** `/audit @username`, `/audit_sites`, `/stats`, `/log`, `/learn [url]`.
+*   **Интеграции:** Gemini 2.0 Flash, instagrapi, yt-dlp + Whisper, Google Sheets API (ID: `1nqBnh8WCEyb...`), Telegram Bot API, Zvonok.com webhook (порт 8081).
 *   **Память:** 3-слойная архитектура (`/root/brain/memory/`, `/root/brain/daily/`, `CLAUDE.md`).
 *   **Инфраструктура:** Dashboard задеплоен через PM2/Nginx на `http://2.27.36.182:8080`.
-*   **Процессы:** Git commit/push в `raomaidbat-alt/roamaid_second_brain`, логирование в `/root/brain/daily/`.
+*   **Процессы:** Автоматический Git commit/push в `raomaidbat-alt/roamaid_second_brain`, логирование в `/root/brain/daily/`.
 
 **Что сломано:**
 *   **OpenClaw gateway:** Использует WebSocket (не REST API). Отсутствует прямой доступ к AI-провайдерам (нет API-ключей), настроен через ChatGPT Plus OAuth.
 
-**Следующий шаг (приоритет по порядку):**
-1.  **Генерация каруселей (`/root/skills/carousel_generator/`):** Gemini генерирует текст, Playwright рендерит HTML → PNG (требуется Chromium). Предпросмотр в Telegram для одобрения, затем публикация (Threads 4:5, Instagram 1:1, Stories 9:16).
+**Следующий шаг (приоритет):**
+1.  **Генерация каруселей (`/root/skills/carousel_generator/`):** Gemini генерирует текст слайдов, Playwright рендерит HTML в PNG (требуется Chromium). Предпросмотр в Telegram для одобрения, затем публикация (Threads 4:5, Instagram 1:1, Stories 9:16).
 2.  **Публикация в Threads:** Использование `threads_api` только после одобрения хозяина в Telegram.
 
 **Ключевые файлы и серверы:**

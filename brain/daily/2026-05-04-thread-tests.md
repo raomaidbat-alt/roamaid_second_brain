@@ -20,3 +20,6 @@ Roman provided screenshots/text from @ioannvlasov_goal. Key pattern saved in Ope
 /root/ai-skills/instagram-funnel-analyzer/references/ioannvlasov-threads-pattern.md
 
 Core: “Знаю двух X…” contrast story; first has queue/deals, second has silence; open weak profile; it says correct generic claims, but misses the living client pain: “ни слова про человека, который…”. Use short documentary tone, not teaching. Mandatory CTA to Roman channel.
+
+## Output generated for reel DXMXOYWNltP
+Generated story-led Threads/carousel test concepts from reel about Uzbek food creator: absurd detail + standard niche format = attention. Rule: not teacher tone; use Ioann-style two-business contrast and mandatory CTA to Roman channel placeholder.
