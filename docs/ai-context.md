@@ -1,6 +1,5 @@
-### Статус: 04.05.2026 18:40
-Вот сжатый системный контекст:
-
+### Статус: 04.05.2026 18:50
+```markdown
 **Что работает:**
 *   **Ядро системы:** AI-агент Roamaid Second Brain для роста в соцсетях через Telegram. Файлы: `/root/bot.py` (Telegram бот), `/root/audit_agent.py` (аудит Instagram).
 *   **Скиллы:** Анализ YouTube/Instagram роликов, генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), полный аудит Instagram, аудит сайтов, обучение из YouTube видео (`/learn`).
@@ -9,7 +8,7 @@
 *   **Google Sheets:** ID `1nqBnh8WcEyb9i5B_kt9YmSkQLoBOY-pSnwqE3CJNUuo` (листы: Аккаунты, CRM, Ролики, Активность, Сайты, Сайты-список).
 *   **Память:** 3-слойная архитектура (`/root/brain/memory/`, `/root/brain/daily/`, `CLAUDE.md`).
 *   **Недавно завершено:** Анализ вирусных тредов (`/root/skills/analyze_threads/`) с адаптированным контентом и кнопкой публикации; публикация в Threads (`/root/skills/post_to_threads/`).
-*   **Инфраструктура:** Dashboard развернут через PM2/Nginx на `http://2.27.36.182:8080`.
+*   **Инфраструктура:** Dashboard задеплоен через PM2/Nginx на `http://2.27.36.182:8080`.
 *   **Процесс:** Git commit + push в `raomaidbat-alt/roamaid_second_brain`, логирование в `/root/brain/daily/`.
 
 **Что сломано:**
@@ -27,9 +26,11 @@
     *   `/root/brain/` (директория памяти)
     *   `/root/roamaid_second_brain/CLAUDE.md` (системный контекст)
     *   `.env` (секреты, не трогать)
+    *   `outreach/`, `dashboard/`, `daily_logger.py`, `daily_log.md` (синхронизируются)
 *   **Серверы:**
     *   `150.241.116.28:8000` (Social Analyzer API)
     *   `2.27.36.182` (Telegram бот, все агенты, Dashboard на :8080)
+```
 
 ---
 *Автосжатие через Gemini*
