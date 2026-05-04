@@ -1,12 +1,12 @@
-### Статус: 04.05.2026 18:29
+### Статус: 04.05.2026 18:40
 Вот сжатый системный контекст:
 
 **Что работает:**
-*   **Ядро системы:** AI-агент Roamaid Second Brain (для роста в соцсетях через Telegram). `/root/bot.py` (Telegram бот), `/root/audit_agent.py` (аудит Instagram).
+*   **Ядро системы:** AI-агент Roamaid Second Brain для роста в соцсетях через Telegram. Файлы: `/root/bot.py` (Telegram бот), `/root/audit_agent.py` (аудит Instagram).
 *   **Скиллы:** Анализ YouTube/Instagram роликов, генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), полный аудит Instagram, аудит сайтов, обучение из YouTube видео (`/learn`).
 *   **Команды бота:** `/audit @username`, `/audit_sites`, `/stats`, `/log`, `/learn [youtube url]`.
 *   **Интеграции:** Gemini 2.0 Flash, instagrapi, yt-dlp + Whisper, zvonok.com webhook (порт 8081), Google Sheets API, Telegram Bot API.
-*   **Google Sheets:** ID `1nqBnh8WcEyb9i5B_kt9YmSkQLoBOY-pSnwqE3CJNUuo` (Аккаунты, CRM, Ролики, Активность, Сайты, Сайты-список).
+*   **Google Sheets:** ID `1nqBnh8WcEyb9i5B_kt9YmSkQLoBOY-pSnwqE3CJNUuo` (листы: Аккаунты, CRM, Ролики, Активность, Сайты, Сайты-список).
 *   **Память:** 3-слойная архитектура (`/root/brain/memory/`, `/root/brain/daily/`, `CLAUDE.md`).
 *   **Недавно завершено:** Анализ вирусных тредов (`/root/skills/analyze_threads/`) с адаптированным контентом и кнопкой публикации; публикация в Threads (`/root/skills/post_to_threads/`).
 *   **Инфраструктура:** Dashboard развернут через PM2/Nginx на `http://2.27.36.182:8080`.
