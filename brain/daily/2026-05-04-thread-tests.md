@@ -23,3 +23,7 @@ Core: “Знаю двух X…” contrast story; first has queue/deals, second
 
 ## Output generated for reel DXMXOYWNltP
 Generated story-led Threads/carousel test concepts from reel about Uzbek food creator: absurd detail + standard niche format = attention. Rule: not teacher tone; use Ioann-style two-business contrast and mandatory CTA to Roman channel placeholder.
+
+## Roman Threads voice update
+Roman clarified: write Threads like a human, like Roman; do not split every sentence into tiny fragments; write long, clear, trigger-driven posts. Mandatory final CTA link: https://t.me/+H1I_MHFuv603ZTdi
+Updated OpenClaw reference: /root/ai-skills/instagram-funnel-analyzer/references/ioannvlasov-threads-pattern.md

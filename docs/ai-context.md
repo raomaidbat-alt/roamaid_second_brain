@@ -1,8 +1,9 @@
-### Статус: 04.05.2026 19:06
+### Статус: 04.05.2026 19:11
 ```markdown
 **Что работает:**
-*   **Roamaid Second Brain:** Автономный AI-агент для роста в соцсетях через Telegram бот (`/root/bot.py`) и Instagram аудит (`/root/audit_agent.py`).
-*   **Скиллы:** Анализ YouTube/Instagram роликов, генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), полный аудит Instagram/сайтов, обучение из YouTube (`/learn`). **Недавно завершены:** анализ вирусных тредов, публикация в Threads.
+*   **Roamaid Second Brain:** Автономный AI-агент для роста в соцсетях, управляемый через Telegram бот (`/root/bot.py`).
+*   **Скиллы:** Аудит Instagram аккаунтов (`/root/audit_agent.py`), анализ YouTube/Instagram роликов, генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), полный аудит Instagram/сайтов, обучение из YouTube видео (`/learn`).
+*   **Недавно завершено:** Анализ вирусных тредов (`/analyze_threads`), публикация в Threads (`/post_to_threads`).
 *   **Команды бота:** `/audit @username`, `/audit_sites`, `/stats`, `/log`, `/learn [url]`.
 *   **Интеграции:** Gemini 2.0 Flash, instagrapi, yt-dlp + Whisper, Google Sheets API (ID: `1nqBnh8WCEyb...`), Telegram Bot API, Zvonok.com webhook (порт 8081).
 *   **Память:** 3-слойная архитектура (`/root/brain/memory/`, `/root/brain/daily/`, `CLAUDE.md`).
@@ -13,7 +14,7 @@
 *   **OpenClaw gateway:** Использует WebSocket (не REST API). Отсутствует прямой доступ к AI-провайдерам (нет API-ключей), настроен через ChatGPT Plus OAuth.
 
 **Следующий шаг (приоритет):**
-1.  **Генерация каруселей (`/root/skills/carousel_generator/`):** Gemini генерирует текст слайдов, Playwright рендерит HTML в PNG (требуется Chromium). Предпросмотр в Telegram для одобрения, затем публикация (Threads 4:5, Instagram 1:1, Stories 9:16).
+1.  **Генерация каруселей (`/root/skills/carousel_generator/`):** Gemini генерирует текст слайдов, Playwright рендерит HTML в PNG (требуется Chromium). Предусмотреть предпросмотр в Telegram для одобрения хозяином, затем публикацию (Threads 4:5, Instagram 1:1, Stories 9:16).
 2.  **Публикация в Threads:** Использование `threads_api` только после одобрения хозяина в Telegram.
 
 **Ключевые файлы и серверы:**
