@@ -248,6 +248,75 @@ def ai_call(prompt: str, max_tokens: int = 1200) -> str:
         return 'AI ошибка: %s' % exc
 
 
+
+
+def adaptive_threads_rules(limit: int = 12) -> str:
+    """Build lightweight prompt rules from what actually performs: views, likes, comments, ER."""
+    posts = read_json(POSTS_DATA, [])
+    profile = read_json(PROFILE_INSIGHTS, {})
+    profile_posts = profile.get('top_posts') or []
+    threads = read_json(GENERATED_THREADS, [])
+
+    rows = []
+    for p in posts:
+        rows.append({
+            'source': 'manual_metrics',
+            'text': p.get('text') or p.get('caption') or p.get('url') or '',
+            'views': int(p.get('views') or 0),
+            'likes': int(p.get('likes') or 0),
+            'comments': int(p.get('comments') or 0),
+            'reposts': int(p.get('reposts') or 0),
+            'er': float(p.get('er') or 0),
+        })
+    for p in profile_posts:
+        rows.append({
+            'source': 'instagram_profile_top',
+            'text': p.get('caption') or '',
+            'views': int(p.get('views') or 0),
+            'likes': int(p.get('likes') or 0),
+            'comments': int(p.get('comments') or 0),
+            'reposts': 0,
+            'er': float(p.get('er') or 0),
+        })
+    for t in threads:
+        rows.append({
+            'source': 'generated_thread',
+            'text': (t.get('title') or '') + '\n' + (t.get('text') or '')[:800],
+            'views': int(t.get('views') or 0),
+            'likes': int(t.get('likes') or 0),
+            'comments': int(t.get('comments') or 0),
+            'reposts': int(t.get('reposts') or 0),
+            'er': engagement_rate(int(t.get('views') or 0), int(t.get('likes') or 0), int(t.get('comments') or 0), int(t.get('reposts') or 0)),
+        })
+
+    rows = [r for r in rows if (r['views'] or r['likes'] or r['comments'] or r['er']) and r['text']]
+    if not rows:
+        return (
+            'Пока мало метрик. Используй базовый Roman-style: история, контраст двух людей/бизнесов, живой конфликт клиента, честный вывод, CTA в канал. '
+            'После появления просмотров/лайков/комментов промпт будет автоматически подстраиваться.'
+        )
+
+    def score(r):
+        return r['views'] + r['likes'] * 25 + r['comments'] * 120 + r['reposts'] * 180 + int(r['er'] * 100)
+    top = sorted(rows, key=score, reverse=True)[:limit]
+
+    prompt = (
+        'Ты агент адаптации промптов для Threads Романа. По этим постам/тредам с метриками определи, что реально заходит аудитории. '
+        'Верни короткие правила для следующего промпта: какие хуки повторять, какие темы усиливать, какой конфликт аудитории использовать, чего избегать. '
+        'Пиши как внутреннюю инструкцию для генератора, без воды. Учитывай, что Роман хочет стиль: человек рассказывает историю, длинно и понятно, триггерно, не учительски.\n\n'
+        + json.dumps(top, ensure_ascii=False)[:9000]
+    )
+    ai = ai_cached('adaptive_threads_rules_' + str(abs(hash(json.dumps(top, ensure_ascii=False))) % 1000000), prompt, max_tokens=1400, ttl=1800)
+    if not ai.startswith('AI недоступен') and not ai.startswith('AI ошибка'):
+        return ai
+
+    examples = '\n'.join([f"- [{r['source']}] views={r['views']} likes={r['likes']} comments={r['comments']} ER={r['er']}%: {short_caption(r['text'], 220)}" for r in top[:8]])
+    return (
+        'AI-адаптация временно недоступна, но генератор должен опираться на лучшие по метрикам материалы ниже. '
+        'Повторять темы/хуки из верхних строк, сильнее использовать живую боль клиента, не писать сухие инструкции.\n' + examples
+    )
+
+
 def analyze_thread_patterns(threads: List[Dict]) -> str:
     top = sorted([t for t in threads if t.get('er', 0) > 0],
                  key=lambda x: x.get('er', 0), reverse=True)[:8]
@@ -418,14 +487,17 @@ def threads_page(request: Request):
 def create_thread(topic: str = Form(...), tone: str = Form('Roman story-selling')):
     profile_insights = read_json(PROFILE_INSIGHTS, {})
     prompt_agent = profile_insights.get('prompt_agent', '')
+    adaptive_rules = adaptive_threads_rules()
     prompt = (
         'Создай Threads-тред на русском. Тема: %s. Тон: %s.\n'
         'Пиши как человек и как Роман: длинно и понятно, триггерно, без дробления каждой мысли на микропредложения, без учительского тона. '
         'Через историю: наблюдение → контраст → живой конфликт клиента → честный вывод → мягкий CTA. '
         'Хорошая механика: “знаю двух X”, у одного заявки/очередь, у второго красивые посты и тишина, потом показываем что второй говорит общие слова, но не называет настоящую боль клиента.\n'
+        'ВАЖНО: промпт должен автоматически подстраиваться под то, что уже заходит аудитории по просмотрам, лайкам, комментариям и ER. Используй адаптивные правила ниже как приоритетнее общих советов.\n'
         'Разделяй посты строкой ---. Финал ОБЯЗАТЕЛЬНО ведёт в канал: %s\n\n'
+        'АДАПТИВНЫЕ ПРАВИЛА ПО МЕТРИКАМ:\n%s\n\n'
         'Подсказки prompt-agent по профилю Романа, если есть:\n%s'
-    ) % (topic, tone, ROMAN_CHANNEL, prompt_agent[:4000])
+    ) % (topic, tone, ROMAN_CHANNEL, adaptive_rules[:5000], prompt_agent[:3000])
     content = ai_call(prompt, max_tokens=1800)
     rows = read_json(GENERATED_THREADS, [])
     rows.insert(0, {
