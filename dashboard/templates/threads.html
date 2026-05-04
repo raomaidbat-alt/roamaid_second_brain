@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% block title %}Треды{% endblock %}
+{% block content %}
+
+<div class="grid lg:grid-cols-3 gap-6">
+
+  <!-- left: chart + thread list -->
+  <section class="lg:col-span-2 space-y-6">
+
+    <!-- engagement chart -->
+    {% set chart_threads = threads | selectattr('er', 'gt', 0) | list %}
+    {% if chart_threads %}
+    <div class="card">
+      <h2 class="text-base font-semibold text-zinc-300 mb-4">Engagement Rate по тредам</h2>
+      <canvas id="erChart" height="100"></canvas>
+    </div>
+    {% endif %}
+
+    <!-- thread list -->
+    <div class="card">
+      <h2 class="text-base font-semibold text-zinc-300 mb-4">
+        Треды
+        <span class="ml-2 text-xs text-zinc-500 font-normal">{{ threads | length }} шт.</span>
+      </h2>
+
+      {% if not threads %}
+        <p class="text-zinc-500 text-sm">Треды не найдены.</p>
+      {% endif %}
+
+      <div class="space-y-4">
+      {% for t in threads %}
+        <div class="rounded-xl border border-zinc-800 {% if t.source == 'generated' %}bg-indigo-500/5 border-indigo-500/20{% else %}bg-zinc-900/40{% endif %} p-4">
+
+          <!-- header row -->
+          <div class="flex items-start justify-between gap-3 mb-2">
+            <div class="min-w-0">
+              <span class="font-semibold text-sm text-zinc-100 break-words">{{ t.title }}</span>
+              {% if t.source == 'generated' %}
+                <span class="ml-2 text-xs px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">AI</span>
+                {% if t.tone %}<span class="ml-1 text-xs text-zinc-500">{{ t.tone }}</span>{% endif %}
+              {% endif %}
+            </div>
+            <span class="shrink-0 text-sm font-bold {% if t.er > 5 %}text-emerald-300{% elif t.er > 0 %}text-amber-300{% else %}text-zinc-500{% endif %}">
+              ER {{ t.er }}%
+            </span>
+          </div>
+
+          <!-- meta -->
+          <div class="text-xs text-zinc-500 mb-3">
+            {% if t.source == 'generated' %}
+              {{ t.created_at or '' }}
+            {% else %}
+              /brain/{{ t.path }} · {{ t.mtime or '' }}
+            {% endif %}
+          </div>
+
+          <!-- metrics -->
+          <div class="grid grid-cols-4 gap-2 text-center text-xs mb-3">
+            <div class="rounded-lg bg-zinc-900 py-1.5 border border-zinc-800">
+              <div class="text-zinc-400">👁</div>
+              <div class="font-semibold text-zinc-200">{{ t.views or '—' }}</div>
+            </div>
+            <div class="rounded-lg bg-zinc-900 py-1.5 border border-zinc-800">
+              <div class="text-zinc-400">❤️</div>
+              <div class="font-semibold text-zinc-200">{{ t.likes or '—' }}</div>
+            </div>
+            <div class="rounded-lg bg-zinc-900 py-1.5 border border-zinc-800">
+              <div class="text-zinc-400">💬</div>
+              <div class="font-semibold text-zinc-200">{{ t.comments or '—' }}</div>
+            </div>
+            <div class="rounded-lg bg-zinc-900 py-1.5 border border-zinc-800">
+              <div class="text-zinc-400">🔁</div>
+              <div class="font-semibold text-zinc-200">{{ t.reposts or '—' }}</div>
+            </div>
+          </div>
+
+          <!-- editor for generated threads -->
+          {% if t.source == 'generated' and t.id %}
+            <details class="mt-1">
+              <summary class="text-xs text-indigo-300 cursor-pointer select-none hover:text-indigo-200">Редактировать / просмотреть</summary>
+              <form method="post" action="/threads/save" class="mt-2 space-y-2">
+                <input type="hidden" name="thread_id" value="{{ t.id }}">
+                <textarea name="text" rows="12" class="font-mono text-xs">{{ t.text }}</textarea>
+                <div class="flex gap-2">
+                  <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+              </form>
+              <form method="post" action="/threads/delete" class="mt-1"
+                    onsubmit="return confirm('Удалить тред?')">
+                <input type="hidden" name="thread_id" value="{{ t.id }}">
+                <button type="submit" class="btn btn-danger text-xs">Удалить</button>
+              </form>
+            </details>
+          {% else %}
+            <details class="mt-1">
+              <summary class="text-xs text-zinc-500 cursor-pointer select-none hover:text-zinc-300">Показать текст</summary>
+              <div class="mt-2 text-xs text-zinc-400 font-mono whitespace-pre-wrap border border-zinc-800 rounded-lg p-3 bg-black/20 max-h-48 overflow-y-auto">{{ t.text }}</div>
+            </details>
+          {% endif %}
+
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- right sidebar -->
+  <aside class="space-y-6">
+
+    <!-- create thread -->
+    <div class="card">
+      <h2 class="text-base font-semibold text-zinc-300 mb-4">Создать тред</h2>
+      <form method="post" action="/threads/create" class="space-y-3">
+        <div>
+          <label class="text-xs text-zinc-500 mb-1 block">Тема</label>
+          <input name="topic" placeholder="Например: Как я сделал первые 10k на Threads" required>
+        </div>
+        <div>
+          <label class="text-xs text-zinc-500 mb-1 block">Тон</label>
+          <select name="tone">
+            <option value="экспертный">Экспертный</option>
+            <option value="личный">Личный</option>
+            <option value="провокационный">Провокационный</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary w-full justify-center">
+          ✦ Сгенерировать AI
+        </button>
+      </form>
+    </div>
+
+    <!-- ai patterns -->
+    <div class="card">
+      <h2 class="text-base font-semibold text-zinc-300 mb-3">AI: паттерны топ-тредов</h2>
+      <div class="text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed">{{ analysis }}</div>
+    </div>
+
+  </aside>
+</div>
+
+{% if chart_threads %}
+<script>
+const cd = {{ chart_threads[:20] | tojson }};
+new Chart(document.getElementById('erChart'), {
+  type: 'bar',
+  data: {
+    labels: cd.map(x => (x.title || '').slice(0, 28)),
+    datasets: [{
+      label: 'Engagement Rate %',
+      data: cd.map(x => x.er),
+      backgroundColor: cd.map(x => x.er > 5 ? '#10b981' : x.er > 2 ? '#f59e0b' : '#6366f1'),
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    plugins: { legend: { labels: { color: '#a1a1aa' } } },
+    scales: {
+      x: { ticks: { color: '#71717a', font: { size: 10 } }, grid: { color: '#27272a' } },
+      y: { ticks: { color: '#71717a' }, grid: { color: '#27272a' } }
+    }
+  }
+});
+</script>
+{% endif %}
+
+{% endblock %}

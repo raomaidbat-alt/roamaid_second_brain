@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block title %}Главная{% endblock %}
+{% block content %}
+
+<!-- stat cards -->
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
+  {% set stat_items = [
+    ('Аккаунтов', stats.accounts, 'text-violet-300'),
+    ('Тредов',    stats.threads,  'text-indigo-300'),
+    ('Заявок',    stats.leads,    'text-emerald-300'),
+    ('Аудитов',   stats.audits,   'text-amber-300'),
+    ('Сайтов',    stats.sites,    'text-rose-300'),
+  ] %}
+  {% for label, val, color in stat_items %}
+  <div class="card flex flex-col gap-1">
+    <div class="text-xs text-zinc-500">{{ label }} сегодня</div>
+    <div class="text-3xl font-bold {{ color }}">{{ val }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- pm2 status -->
+<div class="card mb-6">
+  <h2 class="text-base font-semibold text-zinc-300 mb-4">PM2 процессы</h2>
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-left text-zinc-500 border-b border-zinc-800">
+          <th class="pb-2 pr-4">Имя</th>
+          <th class="pb-2 pr-4">Статус</th>
+          <th class="pb-2 pr-4">PID</th>
+          <th class="pb-2 pr-4">Рестартов</th>
+          <th class="pb-2 pr-4">Аптайм</th>
+          <th class="pb-2 pr-4">Память</th>
+          <th class="pb-2">CPU</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in pm2 %}
+        <tr class="border-b border-zinc-800/50 hover:bg-zinc-800/30">
+          <td class="py-2.5 pr-4 font-mono font-medium">{{ p.name }}</td>
+          <td class="py-2.5 pr-4">
+            {% if p.status == 'online' %}
+              <span class="px-2 py-0.5 rounded-md text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">● online</span>
+            {% elif p.status in ['stopped', 'errored'] %}
+              <span class="px-2 py-0.5 rounded-md text-xs bg-rose-500/20 text-rose-300 border border-rose-500/30">● {{ p.status }}</span>
+            {% else %}
+              <span class="px-2 py-0.5 rounded-md text-xs bg-zinc-700/40 text-zinc-400 border border-zinc-700">● {{ p.status }}</span>
+            {% endif %}
+          </td>
+          <td class="py-2.5 pr-4 text-zinc-400 font-mono">{{ p.pid }}</td>
+          <td class="py-2.5 pr-4 text-zinc-400">{{ p.restarts }}</td>
+          <td class="py-2.5 pr-4 text-zinc-300">{{ p.uptime }}</td>
+          <td class="py-2.5 pr-4 text-zinc-300">{{ p.memory }} MB</td>
+          <td class="py-2.5 {% if p.cpu > 50 %}text-amber-300{% else %}text-zinc-300{% endif %}">{{ p.cpu }}%</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="py-4 text-center text-zinc-500">PM2 недоступен</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- events -->
+<div class="card">
+  <h2 class="text-base font-semibold text-zinc-300 mb-4">Активность сегодня</h2>
+  {% if events %}
+  <div class="space-y-1.5">
+    {% for e in events %}
+    <div class="flex items-start gap-3 rounded-lg bg-zinc-900/60 border border-zinc-800/60 px-3 py-2">
+      <span class="text-indigo-400 mt-0.5 shrink-0">›</span>
+      <span class="font-mono text-xs text-zinc-300 leading-5 break-all">{{ e }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-zinc-500 text-sm">Событий за сегодня нет.</div>
+  {% endif %}
+</div>
+
+{% endblock %}

@@ -6,6 +6,8 @@ import time
 import random
 import asyncio
 import datetime
+import logging
+import traceback
 import urllib.parse
 import requests
 import gspread
@@ -15,6 +17,7 @@ import phonenumbers
 from phonenumbers import geocoder as ph_geocoder, carrier as ph_carrier
 from google.oauth2.service_account import Credentials
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.error import NetworkError, RetryAfter, TimedOut
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
@@ -26,6 +29,13 @@ from telegram.ext import (
 from audit_agent import run_audit, run_audit_sites, get_ab_stats_text
 import daily_logger
 from skills.learn_from_video.skill import learn_from_video
+from outreach.outreach_manager import (
+    add_contact,
+    get_stats as outreach_get_stats,
+    load_email_config,
+    run_outreach,
+    save_email_config,
+)
 from skills.analyze_threads.skill import analyze_threads
 from skills.post_to_threads.skill import post_to_threads, post_thread_series
 try:
@@ -51,6 +61,14 @@ GEMINI_URL = (
 FEEDBACK_FILE = "/root/feedback.json"
 GOOGLE_CREDS_FILE = "/root/google_credentials.json"
 SPREADSHEET_ID = "1nqBnh8WcEyb9i5B_kt9YmSkQLoBOY-pSnwqE3CJNUuo"
+BOT_ERROR_LOG = "/root/bot_errors.log"
+
+logging.basicConfig(
+    filename=BOT_ERROR_LOG,
+    level=logging.ERROR,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -370,6 +388,16 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await _save_activity_from_text(text, update, context)
         return
 
+    if "outreach_step" in context.user_data:
+        done, reply = _next_outreach_step(context, text)
+        await update.message.reply_text(reply)
+        return
+
+    if "email_setup_step" in context.user_data:
+        done, reply = _next_email_step(context, text)
+        await update.message.reply_text(reply)
+        return
+
     yt_match = re.search(r'(https?://(?:www\.)?(?:youtube\.com/\S+|youtu\.be/\S+))', text)
     if yt_match and re.search(r'\b(учись|learn)\b', text, re.IGNORECASE):
         url = yt_match.group(1)
@@ -399,9 +427,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     if not any(x in text for x in ["instagram.com", "youtube.com", "youtu.be"]):
-        await update.message.reply_text(
-            "Скинь ссылку на Instagram Reels, YouTube или Threads."
-        )
         return
 
     await update.message.reply_text("⏳ Анализирую видео, подожди...")
@@ -774,17 +799,241 @@ async def _save_activity_from_text(text: str, update: Update, context: ContextTy
     await update.message.reply_text(f"✅ Записал: {', '.join(saved)}")
 
 
-async def main():
+# ── Outreach handlers ─────────────────────────────────────────────────────────
+
+_OUTREACH_ADD_FIELDS = ["name", "telegram", "email", "audit_type", "audit_data"]
+_OUTREACH_ADD_PROMPTS = {
+    "name":       "Имя контакта:",
+    "telegram":   "Telegram username (например @username) или - если нет:",
+    "email":      "Email адрес или - если нет:",
+    "audit_type": "Тип аудита — введи funnel (воронка) или site (сайт):",
+    "audit_data": "Данные аудита для персонализации (опиши коротко что нашли):",
+}
+_SETUP_EMAIL_FIELDS = ["login", "app_password"]
+_SETUP_EMAIL_PROMPTS = {
+    "login":        "Gmail адрес (например you@gmail.com):",
+    "app_password": "App Password от Gmail (16 символов без пробелов):",
+}
+
+
+async def handle_outreach_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    from outreach.outreach_manager import load_contacts
+    contacts = load_contacts()
+    pending = [c for c in contacts if c.get("status") == "pending"]
+    if not pending:
+        await update.message.reply_text("Нет контактов со статусом pending. Добавь через /outreach_add.")
+        return
+    await update.message.reply_text(
+        f"🚀 Запускаю рассылку: {len(pending)} контактов...\n"
+        "Задержка 30-60 сек между сообщениями. Отчёт пришлю после завершения."
+    )
+    asyncio.create_task(_run_outreach_task(update.message.chat_id, context.bot))
+
+
+async def _run_outreach_task(chat_id: int, bot):
+    try:
+        stats = await run_outreach(bot)
+        text = (
+            f"✅ Рассылка завершена!\n"
+            f"• Отправлено: {stats['sent']}\n"
+            f"• Ошибок: {stats['failed']}\n"
+            f"• Пропущено: {stats['skipped']}"
+        )
+    except Exception as e:
+        logger.error("Outreach task error", exc_info=True)
+        text = f"❌ Ошибка рассылки: {e}"
+    await bot.send_message(chat_id=chat_id, text=text)
+
+
+async def handle_outreach_add(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["outreach_step"] = 0
+    context.user_data["outreach_temp"] = {}
+    first_field = _OUTREACH_ADD_FIELDS[0]
+    await update.message.reply_text(
+        f"Добавляем новый контакт. Шаг 1/{len(_OUTREACH_ADD_FIELDS)}\n\n"
+        + _OUTREACH_ADD_PROMPTS[first_field]
+    )
+
+
+async def handle_outreach_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    stats = outreach_get_stats()
+    email_cfg = load_email_config()
+    email_status = f"✅ {email_cfg['login']}" if email_cfg else "❌ не настроен"
+    text = (
+        f"📊 Статистика рассылки:\n"
+        f"• Всего контактов: {stats['total']}\n"
+        f"• Ожидает: {stats['pending']}\n"
+        f"• Отправлено: {stats['sent']}\n"
+        f"• Ошибок: {stats['failed']}\n\n"
+        f"📧 Gmail: {email_status}"
+    )
+    await update.message.reply_text(text)
+
+
+async def handle_setup_email(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["email_setup_step"] = 0
+    context.user_data["email_setup_temp"] = {}
+    await update.message.reply_text(
+        "Настройка Gmail для рассылки. Шаг 1/2\n\n"
+        + _SETUP_EMAIL_PROMPTS["login"]
+    )
+
+
+def _next_outreach_step(context, value: str):
+    """Advance outreach_add state machine. Returns (done, reply_text)."""
+    step = context.user_data.get("outreach_step", 0)
+    field = _OUTREACH_ADD_FIELDS[step]
+
+    # Validate audit_type
+    if field == "audit_type" and value.strip().lower() not in ("funnel", "site"):
+        return False, "Введи funnel или site:"
+
+    context.user_data["outreach_temp"][field] = value.strip() if value.strip() != "-" else ""
+    step += 1
+    context.user_data["outreach_step"] = step
+
+    if step >= len(_OUTREACH_ADD_FIELDS):
+        data = context.user_data.pop("outreach_temp")
+        context.user_data.pop("outreach_step", None)
+        add_contact(data)
+        summary = (
+            f"✅ Контакт добавлен!\n"
+            f"• Имя: {data.get('name')}\n"
+            f"• Telegram: {data.get('telegram') or '—'}\n"
+            f"• Email: {data.get('email') or '—'}\n"
+            f"• Тип аудита: {data.get('audit_type')}\n"
+            f"• Статус: pending"
+        )
+        return True, summary
+
+    next_field = _OUTREACH_ADD_FIELDS[step]
+    prompt = f"Шаг {step + 1}/{len(_OUTREACH_ADD_FIELDS)}\n\n" + _OUTREACH_ADD_PROMPTS[next_field]
+    return False, prompt
+
+
+def _next_email_step(context, value: str):
+    """Advance setup_email state machine. Returns (done, reply_text)."""
+    step = context.user_data.get("email_setup_step", 0)
+    field = _SETUP_EMAIL_FIELDS[step]
+    context.user_data["email_setup_temp"][field] = value.strip()
+    step += 1
+    context.user_data["email_setup_step"] = step
+
+    if step >= len(_SETUP_EMAIL_FIELDS):
+        data = context.user_data.pop("email_setup_temp")
+        context.user_data.pop("email_setup_step", None)
+        save_email_config(data["login"], data["app_password"])
+        return True, f"✅ Gmail настроен: {data['login']}"
+
+    next_field = _SETUP_EMAIL_FIELDS[step]
+    prompt = f"Шаг {step + 1}/2\n\n" + _SETUP_EMAIL_PROMPTS[next_field]
+    return False, prompt
+
+
+async def log_telegram_error(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Log exceptions raised inside telegram handlers without changing bot behavior."""
+    error = context.error
+    exc_info = (type(error), error, error.__traceback__) if error else None
+    logger.error("Telegram handler error. update=%r", update, exc_info=exc_info)
+
+
+def build_application():
+    application = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
+    application.add_handler(CommandHandler("audit", handle_audit))
+    application.add_handler(CommandHandler("audit_sites", handle_audit_sites))
+    application.add_handler(CommandHandler("learn", handle_learn))
+    application.add_handler(CommandHandler("analyze_threads", handle_analyze_threads))
+    application.add_handler(CommandHandler("stats", handle_stats))
+    application.add_handler(CommandHandler("log", handle_log))
+    application.add_handler(CommandHandler("outreach_start", handle_outreach_start))
+    application.add_handler(CommandHandler("outreach_add", handle_outreach_add))
+    application.add_handler(CommandHandler("outreach_status", handle_outreach_status))
+    application.add_handler(CommandHandler("setup_email", handle_setup_email))
+    application.add_handler(MessageHandler(filters.VOICE, handle_voice))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    application.add_handler(CallbackQueryHandler(handle_thread_pick, pattern="^thread_pick_"))
+    application.add_handler(CallbackQueryHandler(handle_threads_publish, pattern="^threads_publish_"))
+    application.add_handler(CallbackQueryHandler(handle_feedback, pattern="^feedback_"))
+    application.add_error_handler(log_telegram_error)
+    return application
+
+
+async def run_bot_once():
+    """Run Telegram polling and the optional Zvonok web endpoint until stopped or failed."""
     global app
-    app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
-    app.add_handler(CommandHandler("audit", handle_audit))
-    app.add_handler(CommandHandler("audit_sites", handle_audit_sites))
-    app.add_handler(CommandHandler("learn", handle_learn))
-    app.add_handler(CommandHandler("analyze_threads", handle_analyze_threads))
-    app.add_handler(CommandHandler("stats", handle_stats))
-    app.add_handler(CommandHandler("log", handle_log))
-    app.add_handler(MessageHandler(filters.VOICE, handle_voice))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    app.add_handler(CallbackQueryHandler(handle_thread_pick, pattern="^thread_pick_"))
-    app.add_handler(CallbackQueryHandler(handle_threads_publish, pattern="^threads_publish_"))
-    app.add_handle
+    app = build_application()
+
+    web_app = aiohttp.web.Application()
+    web_app.router.add_get("/zvonok", handle_zvonok)
+    runner = aiohttp.web.AppRunner(web_app)
+    site = None
+
+    try:
+        await runner.setup()
+        site = aiohttp.web.TCPSite(runner, "0.0.0.0", 8081)
+        await site.start()
+        print("Zvonok endpoint started on :8080/zvonok")
+    except OSError as e:
+        logger.error("Zvonok endpoint failed to start", exc_info=True)
+        print(f"Zvonok endpoint failed to start: {e}")
+
+    try:
+        await app.initialize()
+        await app.start()
+        if app.updater is None:
+            raise RuntimeError("Telegram updater is unavailable; cannot start polling")
+        await app.updater.start_polling(drop_pending_updates=True)
+        print("Bot polling started")
+        await asyncio.Event().wait()
+    finally:
+        try:
+            if app.updater is not None and app.updater.running:
+                await app.updater.stop()
+        except Exception:
+            logger.error("Error stopping Telegram updater", exc_info=True)
+        try:
+            if app.running:
+                await app.stop()
+        except Exception:
+            logger.error("Error stopping Telegram application", exc_info=True)
+        try:
+            await app.shutdown()
+        except Exception:
+            logger.error("Error shutting down Telegram application", exc_info=True)
+        try:
+            await runner.cleanup()
+        except Exception:
+            logger.error("Error cleaning up Zvonok web runner", exc_info=True)
+
+
+async def main():
+    reconnect_delay = 5
+    max_reconnect_delay = 300
+
+    while True:
+        try:
+            await run_bot_once()
+            reconnect_delay = 5
+        except asyncio.CancelledError:
+            logger.error("Bot main loop cancelled")
+            raise
+        except (NetworkError, TimedOut, RetryAfter, aiohttp.ClientError, requests.exceptions.RequestException) as e:
+            logger.error("Telegram/network error; reconnecting in %s seconds", reconnect_delay, exc_info=True)
+            print(f"Network error: {e}. Reconnecting in {reconnect_delay}s...")
+            await asyncio.sleep(reconnect_delay)
+            reconnect_delay = min(reconnect_delay * 2, max_reconnect_delay)
+        except Exception as e:
+            logger.error("Unhandled bot crash; restarting in %s seconds", reconnect_delay, exc_info=True)
+            with open(BOT_ERROR_LOG, "a", encoding="utf-8") as f:
+                f.write("\n--- Unhandled bot crash ---\n")
+                f.write(traceback.format_exc())
+            print(f"Unhandled error: {e}. Restarting in {reconnect_delay}s...")
+            await asyncio.sleep(reconnect_delay)
+            reconnect_delay = min(reconnect_delay * 2, max_reconnect_delay)
+
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("Bot stopped by user")

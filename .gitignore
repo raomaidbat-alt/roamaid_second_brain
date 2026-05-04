@@ -4,5 +4,3 @@ __pycache__/
 .token
 *.mp3
 *.mp4
-brain/daily/
-brain/memory/

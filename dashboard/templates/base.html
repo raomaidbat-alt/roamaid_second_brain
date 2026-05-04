@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Roman Ops{% endblock %} — Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: { bg: '#0f0f0f', accent: '#6366f1' } } }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body { background: #0f0f0f; }
+    .card { background: #18181b; border: 1px solid #27272a; border-radius: 1rem; padding: 1.25rem; }
+    textarea, input, select {
+      background: #0f0f0f !important;
+      border: 1px solid #3f3f46 !important;
+      color: #f4f4f5 !important;
+      border-radius: 0.75rem;
+      padding: 0.75rem 1rem;
+      width: 100%;
+      outline: none;
+      transition: border-color .15s;
+    }
+    textarea:focus, input:focus, select:focus { border-color: #6366f1 !important; }
+    .btn { display: inline-flex; align-items: center; gap: .4rem; padding: .6rem 1.2rem;
+           border-radius: .75rem; font-weight: 600; font-size: .875rem; cursor: pointer;
+           transition: opacity .15s; border: none; }
+    .btn:hover { opacity: .85; }
+    .btn-primary { background: #6366f1; color: #fff; }
+    .btn-danger  { background: #ef4444; color: #fff; }
+    .btn-ghost   { background: #27272a; color: #a1a1aa; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #18181b; }
+    ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+  </style>
+</head>
+<body class="text-zinc-100 min-h-screen">
+
+<div class="max-w-7xl mx-auto px-4 py-6">
+
+  <!-- header -->
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center font-bold text-sm">R</div>
+      <div>
+        <div class="text-xs text-indigo-300 leading-none">Roman Ops</div>
+        <div class="text-xl font-bold leading-tight">AI Dashboard</div>
+      </div>
+    </div>
+    <nav class="flex flex-wrap gap-2">
+      {% set nav = [
+        ('home',      '⌂ Главная',   '/'),
+        ('threads',   '🧵 Треды',     '/threads'),
+        ('analytics', '📊 Аналитика', '/analytics'),
+        ('funnels',   '🔻 Воронки',   '/funnels'),
+        ('outreach',  '📬 Рассылки',  '/outreach'),
+      ] %}
+      {% for key, label, url in nav %}
+        <a href="{{ url }}"
+           class="px-3 py-1.5 rounded-xl text-sm font-medium border transition-colors
+                  {% if active == key %}
+                    bg-indigo-500/20 border-indigo-400 text-indigo-200
+                  {% else %}
+                    bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-indigo-500 hover:text-zinc-200
+                  {% endif %}">
+          {{ label }}
+        </a>
+      {% endfor %}
+    </nav>
+  </header>
+
+  {% block content %}{% endblock %}
+
+</div>
+
+<script>
+  // disable submit buttons while loading to prevent double-submit
+  document.querySelectorAll('form').forEach(f => {
+    f.addEventListener('submit', () => {
+      f.querySelectorAll('button[type=submit], button:not([type])').forEach(b => {
+        b.disabled = true;
+        b.textContent = '⏳ ' + b.textContent;
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% block title %}Аналитика{% endblock %}
+{% block content %}
+
+<!-- parse form -->
+<div class="card mb-6">
+  <h2 class="text-base font-semibold text-zinc-300 mb-3">Разобрать пост / профиль</h2>
+  <form method="post" action="/analytics/parse" class="flex gap-3">
+    <input name="url" placeholder="https://www.threads.net/... или instagram.com/..." required class="flex-1">
+    <button type="submit" class="btn btn-primary shrink-0">Разобрать</button>
+  </form>
+</div>
+
+<div class="grid lg:grid-cols-3 gap-6">
+
+  <!-- posts table + chart -->
+  <section class="lg:col-span-2 space-y-6">
+
+    {% if posts %}
+    <!-- reach chart -->
+    <div class="card">
+      <h2 class="text-base font-semibold text-zinc-300 mb-4">Динамика охватов</h2>
+      <canvas id="reachChart" height="100"></canvas>
+    </div>
+    {% endif %}
+
+    <!-- posts table -->
+    <div class="card">
+      <h2 class="text-base font-semibold text-zinc-300 mb-4">
+        Посты
+        <span class="ml-2 text-xs text-zinc-500 font-normal">{{ posts | length }} записей</span>
+      </h2>
+      {% if not posts %}
+        <p class="text-sm text-zinc-500">Добавь первую ссылку выше.</p>
+      {% else %}
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-left text-xs text-zinc-500 border-b border-zinc-800">
+              <th class="pb-2 pr-3">Текст / URL</th>
+              <th class="pb-2 pr-3 text-right">👁</th>
+              <th class="pb-2 pr-3 text-right">❤️</th>
+              <th class="pb-2 pr-3 text-right">💬</th>
+              <th class="pb-2 pr-3 text-right">🔁</th>
+              <th class="pb-2 pr-3">Дата</th>
+              <th class="pb-2 text-right">ER</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in posts %}
+            <tr class="border-b border-zinc-800/40 hover:bg-zinc-800/20">
+              <td class="py-2.5 pr-3 max-w-xs">
+                <div class="text-zinc-200 text-xs line-clamp-2">{{ p.text }}</div>
+                <a href="{{ p.url }}" target="_blank"
+                   class="text-indigo-400 text-xs hover:underline break-all">{{ p.url | truncate(50) }}</a>
+              </td>
+              <td class="py-2.5 pr-3 text-right text-zinc-300">{{ p.views or '—' }}</td>
+              <td class="py-2.5 pr-3 text-right text-zinc-300">{{ p.likes or '—' }}</td>
+              <td class="py-2.5 pr-3 text-right text-zinc-300">{{ p.comments or '—' }}</td>
+              <td class="py-2.5 pr-3 text-right text-zinc-300">{{ p.reposts or '—' }}</td>
+              <td class="py-2.5 pr-3 text-xs text-zinc-500 whitespace-nowrap">{{ p.date }}</td>
+              <td class="py-2.5 text-right font-semibold
+                {% if p.er > 5 %}text-emerald-300{% elif p.er > 0 %}text-amber-300{% else %}text-zinc-500{% endif %}">
+                {% if p.er %}{{ p.er }}%{% else %}—{% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- ai conclusions -->
+  <aside class="card h-fit">
+    <h2 class="text-base font-semibold text-zinc-300 mb-3">AI выводы</h2>
+    <div class="text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed">{{ conclusions }}</div>
+  </aside>
+
+</div>
+
+{% if posts %}
+<script>
+const posts = {{ posts | tojson }}.slice().reverse();
+new Chart(document.getElementById('reachChart'), {
+  type: 'line',
+  data: {
+    labels: posts.map(x => x.date),
+    datasets: [
+      {
+        label: 'Просмотры',
+        data: posts.map(x => x.views),
+        borderColor: '#6366f1',
+        backgroundColor: 'rgba(99,102,241,.15)',
+        tension: .35, fill: true,
+      },
+      {
+        label: 'Лайки',
+        data: posts.map(x => x.likes),
+        borderColor: '#10b981',
+        backgroundColor: 'rgba(16,185,129,.1)',
+        tension: .35, fill: false,
+      }
+    ]
+  },
+  options: {
+    plugins: { legend: { labels: { color: '#a1a1aa' } } },
+    scales: {
+      x: { ticks: { color: '#71717a', font: { size: 10 } }, grid: { color: '#27272a' } },
+      y: { ticks: { color: '#71717a' }, grid: { color: '#27272a' } }
+    }
+  }
+});
+</script>
+{% endif %}
+
+{% endblock %}
