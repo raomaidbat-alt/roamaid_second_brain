@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "updatedAt": "2026-05-03T12:19:49.417Z",
+  "entries": {
+    "memory:memory/2026-05-03.md:1:3": {
+      "key": "memory:memory/2026-05-03.md:1:3",
+      "path": "memory/2026-05-03.md",
+      "startLine": 1,
+      "endLine": 3,
+      "source": "memory",
+      "snippet": "- Roman set a standing reasoning preference: architecture/code → /reasoning medium; commands/checks → /reasoning low; simple chat/Q&A → /reasoning off. Switch automatically when possible.",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.8790975362062454,
+      "maxScore": 0.44280496537685393,
+      "firstRecalledAt": "2026-05-03T12:16:05.799Z",
+      "lastRecalledAt": "2026-05-03T12:19:49.417Z",
+      "queryHashes": [
+        "07758a2c1755",
+        "1dbeb1a88b1a"
+      ],
+      "recallDays": [
+        "2026-05-03"
+      ],
+      "conceptTags": [
+        "architecture/code",
+        "commands/checks",
+        "chat/q",
+        "roman",
+        "set",
+        "standing",
+        "reasoning",
+        "preference"
+      ]
+    }
+  }
+}
