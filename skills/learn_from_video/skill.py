@@ -3,14 +3,25 @@ import os
 import json
 import re
 import subprocess
+import requests as _requests
 from pathlib import Path
 from datetime import datetime
-from dotenv import load_dotenv
-import google.generativeai as genai
 
-load_dotenv()
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel("gemini-2.0-flash")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+_GEMINI_URL = (
+    "https://generativelanguage.googleapis.com/v1beta/models"
+    "/gemini-2.0-flash:generateContent?key=" + GEMINI_API_KEY
+)
+
+
+def _gemini(prompt: str) -> str:
+    resp = _requests.post(
+        _GEMINI_URL,
+        json={"contents": [{"parts": [{"text": prompt}]}]},
+        timeout=90,
+    )
+    resp.raise_for_status()
+    return resp.json()["candidates"][0]["content"]["parts"][0]["text"]
 
 LESSONS_DIR = Path("/root/brain/raw/lessons")
 LESSONS_DIR.mkdir(parents=True, exist_ok=True)
@@ -120,8 +131,7 @@ def extract_skills_with_gemini(data: dict) -> dict:
 Отвечай ТОЛЬКО JSON без markdown."""
 
     try:
-        response = model.generate_content(prompt)
-        text = response.text.strip()
+        text = _gemini(prompt).strip()
         text = re.sub(r'^```json\s*', '', text)
         text = re.sub(r'\s*```$', '', text)
         return json.loads(text)
