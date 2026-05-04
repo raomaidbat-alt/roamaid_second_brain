@@ -181,7 +181,11 @@ async def fetch_latest_posts(username: str, count: int = 20) -> List[ThreadPost]
 
 
 def analyze_top_posts(top_posts: List[ThreadPost]) -> Dict[str, Any]:
-    payload = [asdict(p) | {"score": p.score} for p in top_posts]
+    payload = []
+    for p in top_posts:
+        item = asdict(p)
+        item["score"] = p.score
+        payload.append(item)
     prompt = f"""Ты Gemini-аналитик контента Романа. Проанализируй топ-5 Threads постов по метрикам.
 
 Нужно определить:

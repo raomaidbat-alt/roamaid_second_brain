@@ -37,6 +37,7 @@ from outreach.outreach_manager import (
     save_email_config,
 )
 from skills.analyze_threads.skill import analyze_threads
+from skills.analyze_my_threads.skill import run_analysis as analyze_my_threads_run
 from skills.post_to_threads.skill import post_to_threads, post_thread_series
 try:
     from skills.generate_thread.skill import (
@@ -681,6 +682,21 @@ async def handle_analyze_threads(update: Update, context: ContextTypes.DEFAULT_T
         await update.message.reply_text("Опубликовать адаптированный тред в Threads?", reply_markup=keyboard)
 
 
+async def handle_my_threads(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("⏳ Анализирую мой Threads: последние 20 постов, топ-5, Gemini-паттерны, Google Sheets и память промптов...")
+    try:
+        result = await analyze_my_threads_run(send_report=False)
+        await update.message.reply_text(
+            "✅ Анализ Threads готов\n"
+            f"Аккаунт: @{result.get('username', '')}\n"
+            f"Топ постов разобрано: {result.get('analyzed', 0)}\n"
+            f"Лучший score: {result.get('top_score', 0)}\n"
+            "Обновил лист Threads-аналитика и /root/brain/memory/my_threads_patterns.md"
+        )
+    except Exception as e:
+        logger.exception("my_threads failed")
+        await update.message.reply_text(f"❌ Ошибка анализа Threads: {e}")
+
 async def handle_threads_publish(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -943,6 +959,7 @@ def build_application():
     application.add_handler(CommandHandler("audit_sites", handle_audit_sites))
     application.add_handler(CommandHandler("learn", handle_learn))
     application.add_handler(CommandHandler("analyze_threads", handle_analyze_threads))
+    application.add_handler(CommandHandler("my_threads", handle_my_threads))
     application.add_handler(CommandHandler("stats", handle_stats))
     application.add_handler(CommandHandler("log", handle_log))
     application.add_handler(CommandHandler("outreach_start", handle_outreach_start))

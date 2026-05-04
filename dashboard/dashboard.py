@@ -655,4 +655,4 @@ def update_contact_status(contact_id: str = Form(...), status: str = Form(...)):
 
 if __name__ == '__main__':
     ensure_files()
-    uvicorn.run(app, host='0.0.0.0', port=8080, reload=False, log_level='info')
+    uvicorn.run(app, host='0.0.0.0', port=8888, reload=False, log_level='info')

@@ -18,6 +18,7 @@ from typing import Any
 import requests
 
 THREAD_WINS_FILE = Path("/root/brain/memory/thread_wins.md")
+MY_THREADS_PATTERNS_FILE = Path("/root/brain/memory/my_threads_patterns.md")
 MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GEMINI_URL = (
@@ -66,6 +67,14 @@ def ensure_memory_file() -> None:
         THREAD_WINS_FILE.write_text(DEFAULT_MEMORY, encoding="utf-8")
 
 
+
+def load_my_threads_patterns(max_chars: int = 8000) -> str:
+    """Return performance-based Threads patterns from Roman's own account."""
+    if not MY_THREADS_PATTERNS_FILE.exists():
+        return ""
+    text = MY_THREADS_PATTERNS_FILE.read_text(encoding="utf-8")
+    return text[-max_chars:] if len(text) > max_chars else text
+
 def load_thread_wins(max_chars: int = 8000) -> str:
     """Return compact thread-win memory for prompt injection."""
     ensure_memory_file()
@@ -97,6 +106,7 @@ def build_thread_prompt(data: dict[str, Any]) -> str:
     likes = _extract(data, ("meta", "like_count"), ("meta", "likes"), default="неизвестно")
     followers = _extract(data, ("meta", "followers"), ("profile", "followers"), default="неизвестно")
     wins = load_thread_wins()
+    my_patterns = load_my_threads_patterns()
 
     return f"""Ты главный автор вирусных тредов для Threads/Instagram в системе Roamaid Second Brain.
 Твоя задача — сделать 3 варианта треда, которые хочется дочитать, сохранить и отправить другу.
@@ -111,6 +121,9 @@ def build_thread_prompt(data: dict[str, Any]) -> str:
 
 ПАМЯТЬ ПОБЕД И ПРАВИЛА, КОТОРЫЕ УЖЕ СРАБОТАЛИ:
 {wins}
+
+ПАТТЕРНЫ МОЕГО THREADS АККАУНТА ПО МЕТРИКАМ:
+{my_patterns}
 
 Сгенерируй 3 варианта треда с разными крючками:
 
