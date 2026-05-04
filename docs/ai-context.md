@@ -1,4 +1,4 @@
-### Статус: 04.05.2026 19:11
+### Статус: 04.05.2026 19:35
 ```markdown
 **Что работает:**
 *   **Roamaid Second Brain:** Автономный AI-агент для роста в соцсетях, управляемый через Telegram бот (`/root/bot.py`).
@@ -7,7 +7,7 @@
 *   **Команды бота:** `/audit @username`, `/audit_sites`, `/stats`, `/log`, `/learn [url]`.
 *   **Интеграции:** Gemini 2.0 Flash, instagrapi, yt-dlp + Whisper, Google Sheets API (ID: `1nqBnh8WCEyb...`), Telegram Bot API, Zvonok.com webhook (порт 8081).
 *   **Память:** 3-слойная архитектура (`/root/brain/memory/`, `/root/brain/daily/`, `CLAUDE.md`).
-*   **Инфраструктура:** Dashboard задеплоен через PM2/Nginx на `http://2.27.36.182:8080`.
+*   **Инфраструктура:** Dashboard задеплоен через PM2/Nginx на `http://2.27.36.182:8080` (с правилом UFW).
 *   **Процессы:** Автоматический Git commit/push в `raomaidbat-alt/roamaid_second_brain`, логирование в `/root/brain/daily/`.
 
 **Что сломано:**

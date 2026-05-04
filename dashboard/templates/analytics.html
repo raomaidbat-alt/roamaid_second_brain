@@ -2,6 +2,17 @@
 {% block title %}Аналитика{% endblock %}
 {% block content %}
 
+
+<!-- profile watcher form -->
+<div class="card mb-6">
+  <h2 class="text-base font-semibold text-zinc-300 mb-3">Мой Instagram: топ посты + агент промптов</h2>
+  <form method="post" action="/analytics/profile" class="flex gap-3">
+    <input name="username" placeholder="@username или ссылка на профиль Instagram" required class="flex-1">
+    <button type="submit" class="btn btn-primary shrink-0">Обновить профиль</button>
+  </form>
+  <div class="mt-2 text-xs text-zinc-500">Агент смотрит последние посты профиля, выбирает топы и улучшает промпты для тредов. CTA: {{ roman_channel }}</div>
+</div>
+
 <!-- parse form -->
 <div class="card mb-6">
   <h2 class="text-base font-semibold text-zinc-300 mb-3">Разобрать пост / профиль</h2>
@@ -10,6 +21,54 @@
     <button type="submit" class="btn btn-primary shrink-0">Разобрать</button>
   </form>
 </div>
+
+
+{% if profile_insights %}
+<div class="grid lg:grid-cols-3 gap-6 mb-6">
+  <section class="lg:col-span-2 card">
+    <h2 class="text-base font-semibold text-zinc-300 mb-1">Топ посты @{{ profile_insights.username }}</h2>
+    <div class="text-xs text-zinc-500 mb-4">Обновлено: {{ profile_insights.updated_at }} · подписчики: {{ profile_insights.followers or '—' }}</div>
+    {% if profile_insights.top_posts %}
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-left text-xs text-zinc-500 border-b border-zinc-800">
+            <th class="pb-2 pr-3">Пост</th>
+            <th class="pb-2 pr-3">Тип</th>
+            <th class="pb-2 pr-3 text-right">👁</th>
+            <th class="pb-2 pr-3 text-right">❤️</th>
+            <th class="pb-2 pr-3 text-right">💬</th>
+            <th class="pb-2 text-right">ER</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for p in profile_insights.top_posts %}
+          <tr class="border-b border-zinc-800/40 hover:bg-zinc-800/20">
+            <td class="py-2.5 pr-3 max-w-xl">
+              <div class="text-zinc-200 text-xs">{{ p.caption or 'Без caption' }}</div>
+              {% if p.url %}<a href="{{ p.url }}" target="_blank" class="text-indigo-400 text-xs hover:underline break-all">открыть</a>{% endif %}
+            </td>
+            <td class="py-2.5 pr-3 text-zinc-400">{{ p.type }}</td>
+            <td class="py-2.5 pr-3 text-right text-zinc-300">{{ p.views or '—' }}</td>
+            <td class="py-2.5 pr-3 text-right text-zinc-300">{{ p.likes or '—' }}</td>
+            <td class="py-2.5 pr-3 text-right text-zinc-300">{{ p.comments or '—' }}</td>
+            <td class="py-2.5 text-right font-semibold {% if p.er > 5 %}text-emerald-300{% elif p.er > 0 %}text-amber-300{% else %}text-zinc-500{% endif %}">{{ p.er }}%</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      <div class="text-zinc-500 text-sm">Топ посты пока не найдены.</div>
+    {% endif %}
+  </section>
+
+  <aside class="card h-fit">
+    <h2 class="text-base font-semibold text-zinc-300 mb-3">Агент промптов для Threads</h2>
+    <div class="text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed">{{ profile_insights.prompt_agent }}</div>
+  </aside>
+</div>
+{% endif %}
 
 <div class="grid lg:grid-cols-3 gap-6">
 
