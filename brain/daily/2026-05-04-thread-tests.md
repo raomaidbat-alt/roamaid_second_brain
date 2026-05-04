@@ -14,3 +14,9 @@ Idea: Uzbek food creator gets huge views without studio/editing by adding absurd
 Roman shared: https://www.threads.com/@ioannvlasov_goal
 Rule added to OpenClaw skill reference: /root/ai-skills/instagram-funnel-analyzer/references/threads-story-selling-rules.md
 Important: Threads page did not expose actual posts via web_fetch; need screenshots/text/specific thread links for exact reverse-engineering. Current rule: story-led, honest, human, channel CTA mandatory.
+
+## Ioann Vlasov Threads pattern learned
+Roman provided screenshots/text from @ioannvlasov_goal. Key pattern saved in OpenClaw skill reference:
+/root/ai-skills/instagram-funnel-analyzer/references/ioannvlasov-threads-pattern.md
+
+Core: “Знаю двух X…” contrast story; first has queue/deals, second has silence; open weak profile; it says correct generic claims, but misses the living client pain: “ни слова про человека, который…”. Use short documentary tone, not teaching. Mandatory CTA to Roman channel.
