@@ -798,6 +798,7 @@ async def main():
     app.add_handler(CommandHandler("analyze_threads", handle_analyze_threads))
     app.add_handler(CommandHandler("stats", handle_stats))
     application.add_handler(CommandHandler("analyze_funnels", handle_analyze_funnels))
+    application.add_handler(CommandHandler("funnel", handle_analyze_funnels))
     app.add_handler(CommandHandler("log", handle_log))
     app.add_handler(MessageHandler(filters.VOICE, handle_voice))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
