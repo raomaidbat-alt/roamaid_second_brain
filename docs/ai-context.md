@@ -1,33 +1,35 @@
-### Статус: 05.05.2026 14:00
+### Статус: 07.05.2026 08:00
 ```markdown
-# Roamaid Second Brain — Системный контекст
+# Roamaid Second Brain — Системный контекст (Сжато)
+
+Ты автономный AI-агент для роста в соцсетях, управляемый исключительно через Telegram бот.
 
 ## Что работает
--   **Роль:** Автономный AI-агент для роста в соцсетях, управляемый через Telegram бот.
--   **Скиллы:** Анализ роликов, генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), полный аудит Instagram и сайтов, обучение из YouTube (`/learn`). Недавно добавлены: анализ вирусных тредов (`/analyze_threads`) и публикация постов в Threads (`/post_to_threads`).
--   **Команды бота:** `/audit`, `/audit_sites`, `/stats`, `/log`, `/learn`, `/analyze_threads`.
--   **Интеграции:** Gemini 2.0 Flash, instagrapi, yt-dlp + Whisper, Google Sheets API (для CRM, аккаунтов, сайтов ID: `1nqBnh8WCEyb...`), Telegram Bot API, zvonok.com webhook.
--   **Память:** 3-слойная архитектура: `/root/brain/memory/`, `/root/brain/daily/`, `/root/roamaid_second_brain/CLAUDE.md`.
--   **Правила:** Чтение `CLAUDE.md`, `git commit + push` после изменений, логирование в `/root/brain/daily/`, `.env` не трогать.
+-   **Функционал:** Telegram бот (`/root/bot.py`), агент аудита Instagram (`/root/audit_agent.py`). Рабочие скиллы: анализ YouTube/Instagram роликов, генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), полный аудит Instagram, аудит сайтов, обучение из YouTube видео (`/learn`), анализ вирусных тредов (`/analyze_threads`), публикация постов в Threads (`/post_to_threads`).
+-   **Команды бота:** `/audit @username`, `/audit_sites`, `/stats`, `/log`, `/learn [youtube url]`, `/analyze_threads @username или URL`.
+-   **Интеграции:** Gemini 2.0 Flash, instagrapi, yt-dlp + Whisper, zvonok.com webhook, Google Sheets API (ID: `1nqBnh8WCEyb9i5B_kt9YpSnwqE3CJNUuo`), Telegram Bot API.
+-   **Память (3 слоя):** `/root/brain/memory/` (факты), `/root/brain/daily/` (ежедневные заметки), `/root/roamaid_second_brain/CLAUDE.md` (правила и контекст).
+-   **Ключевые правила:** Всегда читать `CLAUDE.md`, `git commit + push` после изменений, логировать важные действия, не трогать `.env`.
 
 ## Что сломано
--   **OpenClaw gateway:** Использует WebSocket вместо REST API и настроен через ChatGPT Plus OAuth, что ограничивает прямой доступ к другим AI-провайдерам.
+В предоставленном контексте нет явно указанных сломанных компонентов.
 
-## Следующий шаг (приоритет)
-1.  **Генерация каруселей (`/root/skills/carousel_generator/`):** Gemini генерирует текст, Playwright рендерит HTML в PNG (требуется Chromium). Telegram превью для одобрения хозяином перед публикацией (Threads 4:5, Instagram 1:1, Stories 9:16).
-2.  **Публикация в Threads (одобрение):** Внедрить обязательный процесс одобрения хозяином в Telegram перед использованием функции публикации.
+## Следующий шаг (приоритет по порядку)
+1.  **Генерация каруселей** (`/root/skills/carousel_generator/`): Gemini генерирует текст слайдов, Playwright рендерит HTML → PNG (требуется установка Chromium). Требуется механизм одобрения хозяином через Telegram перед публикацией в Threads (4:5), Instagram (1:1), Stories (9:16).
+2.  **Публикация в Threads с одобрением:** Внедрить обязательное одобрение хозяина через Telegram для любой публикации в Threads.
 
 ## Ключевые файлы и серверы
 -   **Файлы:**
     -   `/root/bot.py` (Telegram бот)
-    -   `/root/audit_agent.py` (Агент аудита Instagram)
+    -   `/root/audit_agent.py` (Аудит Instagram)
     -   `/root/skills/` (Директория всех скиллов)
     -   `/root/brain/` (Директория памяти)
     -   `/root/roamaid_second_brain/CLAUDE.md` (Системный контекст, правила)
     -   `.env` (Секреты конфигурации)
+    -   Google Sheets ID: `1nqBnh8WCEyb9i5B_kt9YpSnwqE3CJNUuo`
 -   **Серверы:**
     -   `150.241.116.28:8000` (Social Analyzer API)
-    -   `2.27.36.182` (Telegram бот, все агенты)
+    -   `2.27.36.182` (Telegram бот + все агенты)
 ```
 
 ---
