@@ -1,4 +1,4 @@
-### Статус: 08.05.2026 02:00
+### Статус: 08.05.2026 04:00
 ```markdown
 # Roamaid Second Brain — Системный контекст (Сжато)
 
@@ -27,7 +27,7 @@
     -   `/root/brain/` (Директория памяти)
     -   `/root/roamaid_second_brain/CLAUDE.md` (Системный контекст, правила)
     -   `.env` (Секреты конфигурации)
-    -   Google Sheets ID: `1nqBnh8WCEyb9i5B_kt9YpSnwqE3CJNUuo` (Листы: Аккаунты, CRM, Ролики, Активность, Сайты, Сайты-список)
+    -   Google Sheets ID: `1nqBnh8WCEyb9i5B_kt9YmSkQLoBOY-pSnwqE3CJNUuo` (Листы: Аккаунты, CRM, Ролики, Активность, Сайты, Сайты-список)
 -   **Серверы:**
     -   `150.241.116.28:8000` (Social Analyzer API)
     -   `2.27.36.182` (Telegram бот + все агенты)
