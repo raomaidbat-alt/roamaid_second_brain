@@ -1,4 +1,4 @@
-### Статус: 09.05.2026 06:00
+### Статус: 09.05.2026 08:00
 ```markdown
 # Roamaid Second Brain — Системный контекст (Сжато)
 
@@ -10,7 +10,7 @@
 -   **Команды бота:** `/audit @username`, `/audit_sites`, `/stats`, `/log`, `/learn [youtube url]`, `/analyze_threads @username или URL`.
 -   **Интеграции:** Gemini 2.0 Flash, instagrapi, yt-dlp + Whisper, zvonok.com webhook, Google Sheets API, Telegram Bot API.
 -   **Память (3 слоя):** `/root/brain/memory/` (факты), `/root/brain/daily/` (ежедневные заметки), `/root/roamaid_second_brain/CLAUDE.md` (правила и контекст).
--   **Правила:** Всегда читать `CLAUDE.md`, `git commit + push` после изменений, логировать важные действия, не трогать `.env`.
+-   **Правила работы:** Всегда читать `CLAUDE.md`, `git commit + push` после изменений, логировать важные действия, не трогать `.env`.
 
 ## Что сломано
 В предоставленном системном контексте нет явно указанных сломанных компонентов или ошибок.
