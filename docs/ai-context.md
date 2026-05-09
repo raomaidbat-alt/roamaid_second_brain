@@ -1,4 +1,4 @@
-### Статус: 09.05.2026 14:00
+### Статус: 09.05.2026 16:00
 ```markdown
 # Roamaid Second Brain — Системный контекст (Сжато)
 
@@ -6,10 +6,10 @@
 
 ## Что работает
 -   **Ядро:** Telegram бот (`/root/bot.py`), агент аудита Instagram (`/root/audit_agent.py`).
--   **Скиллы:** Анализ YouTube/Instagram роликов, генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), полный аудит Instagram, аудит сайтов, обучение из YouTube видео (`/learn`), **анализ вирусных тредов (`/analyze_threads`), публикация постов/тредов в Threads (`/post_to_threads`)**.
+-   **Скиллы:** Анализ YouTube/Instagram роликов, генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), полный аудит Instagram, аудит сайтов, обучение из YouTube видео (`/learn`), анализ вирусных тредов (`/analyze_threads`), публикация постов/тредов в Threads.
 -   **Команды бота:** `/audit @username`, `/audit_sites`, `/stats`, `/log`, `/learn [youtube url]`, `/analyze_threads @username или URL`.
 -   **Интеграции:** Gemini 2.0 Flash, instagrapi, yt-dlp + Whisper, zvonok.com webhook, Google Sheets API, Telegram Bot API.
--   **Память (3 слоя):** `/root/brain/memory/` (факты), `/root/brain/daily/` (ежедневные заметки), `/root/roamaid_second_brain/CLAUDE.md` (правила и контекст).
+-   **Память (3 слоя):** `/root/brain/memory/`, `/root/brain/daily/`, `/root/roamaid_second_brain/CLAUDE.md`.
 -   **Правила работы:** Всегда читать `CLAUDE.md`, `git commit + push` после изменений, логировать важные действия, не трогать `.env`.
 
 ## Что сломано
