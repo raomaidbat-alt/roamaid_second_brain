@@ -1,4 +1,4 @@
-### Статус: 10.05.2026 18:00
+### Статус: 10.05.2026 20:00
 ```markdown
 # Roamaid Second Brain — Сжатый системный контекст
 
@@ -9,7 +9,7 @@
 -   **Скиллы:** Анализ YouTube/Instagram роликов, генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), полный аудит Instagram, аудит сайтов, обучение из YouTube видео (`/learn`), анализ вирусных тредов (`/analyze_threads`), публикация постов/тредов в Threads (`/post_to_threads`).
 -   **Команды бота:** `/audit @username`, `/audit_sites`, `/stats`, `/log`, `/learn [url]`, `/analyze_threads [@username или URL]`.
 -   **Интеграции:** Gemini 2.0 Flash, instagrapi, yt-dlp + Whisper, zvonok.com webhook, Google Sheets API (ID: `1nqBnh8WCEyb9i5B_kt9YmSkQLoBOY-pSnwqE3CJNUuo`), Telegram Bot API.
--   **Память (3 слоя):** `/root/brain/memory/` (факты), `/root/brain/daily/` (ежедневные заметки), `/root/roamaid_second_brain/CLAUDE.md` (правила).
+-   **Память (3 слоя):** `/root/brain/memory/` (факты), `/root/brain/daily/` (ежедневные заметки), `/root/roamaid_second_brain/CLAUDE.md` (правила и контекст).
 -   **Правила работы:** Всегда читать `CLAUDE.md`, `git commit + push` после изменений, логировать важные действия, не трогать `.env`.
 
 ## Что сломано
