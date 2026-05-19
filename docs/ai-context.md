@@ -1,4 +1,4 @@
-### Статус: 19.05.2026 08:00
+### Статус: 19.05.2026 12:00
 ```markdown
 # Roamaid Second Brain — Сжатый системный контекст
 
@@ -8,7 +8,7 @@
 *   **Функционал:** Аудит Instagram (`/audit`) и сайтов (`/audit_sites`), анализ YouTube/Instagram роликов, генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), обучение из YouTube (`/learn`), анализ вирусных тредов (`/analyze_threads`), публикация в Threads (`/post_to_threads`).
 *   **Команды бота:** `/audit @username`, `/audit_sites`, `/stats`, `/log`, `/learn [url]`, `/analyze_threads`.
 *   **Интеграции:** Gemini 2.0 Flash, instagrapi, yt-dlp + Whisper, zvonok.com webhook, Google Sheets API (ID: `1nqBnh8WCEyb9i5B_kt9YmSkQLoBOY-pSnwqE3CJNUuo`), Telegram Bot API.
-*   **Архитектура:** Трехслойная память (факты, ежедневные заметки, системный контекст).
+*   **Архитектура:** Трехслойная память (факты о проектах, ежедневные заметки, системный контекст).
 *   **Правила работы:** Читать системный контекст, `git commit + push` после изменений, логировать важные действия, не трогать `.env`.
 
 ## Что сломано
@@ -23,7 +23,7 @@
     *   `/root/bot.py` (Telegram бот)
     *   `/root/audit_agent.py` (Аудит Instagram)
     *   `/root/skills/` (все скиллы)
-    *   `/root/brain/` (память)
+    *   `/root/brain/` (память системы)
     *   `/root/roamaid_second_brain/CLAUDE.md` (системный контекст)
     *   `.env` (секреты)
 *   **Серверы:**
