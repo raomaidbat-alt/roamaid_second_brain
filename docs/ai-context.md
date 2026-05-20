@@ -1,4 +1,4 @@
-### Статус: 20.05.2026 12:00
+### Статус: 20.05.2026 20:00
 ```markdown
 # Roamaid Second Brain — Сжатый системный контекст
 
@@ -22,6 +22,9 @@
 *   **Файлы/Директории:** `/root/bot.py` (Telegram бот), `/root/audit_agent.py` (Аудит Instagram), `/root/skills/` (все скиллы), `/root/brain/` (память системы), `/root/roamaid_second_brain/CLAUDE.md` (системный контекст), `.env` (секреты).
 *   **Серверы:** `150.241.116.28:8000` (Social Analyzer API), `2.27.36.182` (Telegram бот + все агенты).
 ```
+
+---
+*Автосжатие через Gemini*
 
 ---
 *Автосжатие через Gemini*
