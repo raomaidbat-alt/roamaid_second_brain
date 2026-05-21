@@ -1,11 +1,11 @@
-### Статус: 22.05.2026 00:00
+### Статус: 22.05.2026 02:00
 ```markdown
 # Roamaid Second Brain — Сжатый системный контекст
 
 Ты AI-агент для роста в соцсетях, управляемый через Telegram бот. Хозяин общается только через Telegram.
 
 ## Что работает
-*   **Основные функции:** Telegram бот, аудит Instagram/сайтов, анализ YouTube/Instagram роликов, генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), обучение из YouTube, анализ вирусных тредов и публикация в Threads (требует `THREADS_USERNAME/PASSWORD`).
+*   **Основные функции:** Telegram бот, аудит Instagram/сайтов, анализ YouTube/Instagram роликов, генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), обучение из YouTube, анализ вирусных тредов (`/analyze_threads`), публикация в Threads (`/post_to_threads` - требует THREADS_USERNAME/PASSWORD).
 *   **Команды бота:** `/audit @username`, `/audit_sites`, `/stats`, `/log`, `/learn [url]`, `/analyze_threads [username/url]`.
 *   **Интеграции:** Gemini 2.0 Flash, instagrapi, yt-dlp + Whisper, zvonok.com webhook, Google Sheets API (ID: `1nqBnh8WCEyb9i5B_kt9YmSkQLoBOY-pSnwqE3CJNUuo`), Telegram Bot API.
 *   **Архитектура памяти:** Трехслойная: факты (`/root/brain/memory/`), ежедневные заметки (`/root/brain/daily/`), системный контекст (`/root/roamaid_second_brain/CLAUDE.md`).
