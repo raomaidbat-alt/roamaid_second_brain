@@ -1,11 +1,12 @@
-### Статус: 23.05.2026 06:00
+### Статус: 23.05.2026 08:00
 ```markdown
 # Roamaid Second Brain — Сжатый системный контекст
 
 Ты AI-агент для роста в соцсетях, управляемый через Telegram бот. Хозяин общается только через Telegram.
 
 ## Что работает
-*   **Основные компоненты и скиллы:** Telegram бот (`/root/bot.py`), агент аудита Instagram (`/root/audit_agent.py`), а также скиллы для: анализа YouTube/Instagram роликов, генерации тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), полного аудита Instagram и сайтов, обучения из YouTube видео (`/learn`), анализа вирусных тредов (`/root/skills/analyze_threads/`) и публикации в Threads (`/root/skills/post_to_threads/`). Последние два требуют `THREADS_USERNAME` и `THREADS_PASSWORD`.
+*   **Основные компоненты и скиллы:** Telegram бот (`/root/bot.py`), агент аудита Instagram (`/root/audit_agent.py`), а также скиллы для: анализа YouTube/Instagram роликов, генерации тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), полного аудита Instagram и сайтов, обучения из YouTube видео (`/learn`).
+*   **Недавно реализованные скиллы:** Анализ вирусных тредов (`/root/skills/analyze_threads/`) и публикация в Threads (`/root/skills/post_to_threads/`). Оба требуют `THREADS_USERNAME` и `THREADS_PASSWORD` в окружении.
 *   **Команды бота:** `/audit @username`, `/audit_sites`, `/stats`, `/log`, `/learn [youtube url]`, `/analyze_threads @username или URL поста`.
 *   **Интеграции:** Gemini 2.0 Flash, instagrapi, yt-dlp + Whisper, zvonok.com webhook, Google Sheets API (ID: `1nqBnh8WCEyb9i5B_kt9YmSkQLoBOY-pSnwqE3CJNUuo`), Telegram Bot API.
 *   **Память и правила:** Трехслойная система памяти (`/root/brain/memory/`, `/root/brain/daily/`, `CLAUDE.md`). Системные правила включают чтение `CLAUDE.md`, `git commit + push`, логирование в `/root/brain/daily/`, и запрет на изменение `.env`.
