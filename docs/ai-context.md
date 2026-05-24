@@ -1,4 +1,4 @@
-### Статус: 24.05.2026 18:00
+### Статус: 24.05.2026 20:00
 ```markdown
 # Roamaid Second Brain — Сжатый системный контекст
 
@@ -6,20 +6,20 @@
 
 ## Что работает
 *   **Роль:** Автономный AI-агент для роста в соцсетях, взаимодействие только через Telegram.
-*   **Серверы:** Social Analyzer API (150.241.116.28:8000), Telegram бот + агенты (2.27.36.182).
-*   **Основные компоненты:** `bot.py` (Telegram), `audit_agent.py` (Instagram).
-*   **Скиллы:** Анализ роликов/аккаунтов/сайтов Instagram/YouTube, генерация тредов, обучение из видео. Завершены: анализ вирусных тредов (`/root/skills/analyze_threads/`) и публикация в Threads (`/root/skills/post_to_threads/`), оба требуют `THREADS_USERNAME/PASSWORD`.
-*   **Команды бота:** `/audit @username`, `/audit_sites`, `/stats`, `/log`, `/learn [url]`, `/analyze_threads [url/@username]`.
+*   **Серверы:** Social Analyzer API (150.241.116.28:8000), Telegram бот + все агенты (2.27.36.182).
+*   **Основные компоненты:** `/root/bot.py` (Telegram), `/root/audit_agent.py` (Instagram).
+*   **Скиллы:** Анализ роликов/аккаунтов/сайтов Instagram/YouTube, генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), обучение из видео. Завершены: анализ вирусных тредов (`/root/skills/analyze_threads/`) и публикация в Threads (`/root/skills/post_to_threads/`), оба требуют `THREADS_USERNAME/PASSWORD`.
+*   **Команды бота:** `/audit @username`, `/audit_sites`, `/stats`, `/log`, `/learn [url]`, `/analyze_threads [@username/URL]`.
 *   **Интеграции:** Gemini 2.0 Flash, instagrapi, yt-dlp + Whisper, zvonok.com, Google Sheets API (ID: `1nqBnh8WCEyb9i5B_kt9YmSkQLoBOY-pSnwqE3CJNUuo`), Telegram Bot API.
 *   **Память:** Трехслойная система (`/root/brain/memory/`, `/root/brain/daily/`, `CLAUDE.md`).
-*   **Правила:** Чтение `CLAUDE.md` при старте, git commit/push, логирование в `daily/`, защита `.env`.
+*   **Правила работы:** Чтение `CLAUDE.md` при старте, `git commit + push`, логирование в `/root/brain/daily/`, защита `.env`.
 
 ## Что сломано
 В предоставленном контексте явно сломанных компонентов не указано.
 
 ## Следующий шаг (приоритет по порядку)
 1.  **Генерация каруселей** (`/root/skills/carousel_generator/`): Gemini генерирует текст, Playwright рендерит HTML в PNG (форматы: Threads 4:5, Instagram 1:1, Stories 9:16). Предусмотрены превью и одобрение хозяином в Telegram. Требуется установка Chromium.
-2.  **Публикация в Threads с одобрением:** Внедрить обязательное одобрение хозяином через Telegram перед публикацией (используется `threads_api`).
+2.  **Публикация в Threads с одобрением:** Внедрить обязательное одобрение хозяином через Telegram перед публикацией (использует `threads_api`).
 
 ## Ключевые файлы и серверы
 *   **Серверы:**
