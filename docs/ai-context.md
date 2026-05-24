@@ -1,4 +1,4 @@
-### Статус: 24.05.2026 02:00
+### Статус: 24.05.2026 04:00
 ```markdown
 # Roamaid Second Brain — Сжатый системный контекст
 
@@ -7,7 +7,7 @@
 ## Что работает
 *   **Серверы:** Social Analyzer API (150.241.116.28:8000), Telegram бот + все агенты (2.27.36.182, ты здесь).
 *   **Основные компоненты:** Telegram бот (`/root/bot.py`), агент аудита Instagram (`/root/audit_agent.py`).
-*   **Рабочие скиллы:** Анализ роликов, генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), полный аудит Instagram, аудит сайтов, обучение из YouTube видео. Недавно реализованы: анализ вирусных тредов (`/root/skills/analyze_threads/`) и публикация в Threads (`/root/skills/post_to_threads/`). Последние требуют `THREADS_USERNAME` и `THREADS_PASSWORD` в окружении.
+*   **Рабочие скиллы:** Анализ роликов, генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), полный аудит Instagram, аудит сайтов, обучение из YouTube видео. Недавно реализованы: анализ вирусных тредов (`/root/skills/analyze_threads/`) и публикация в Threads (`/root/skills/post_to_threads/`), требующие `THREADS_USERNAME` и `THREADS_PASSWORD` в окружении.
 *   **Команды бота:** `/audit @username`, `/audit_sites`, `/stats`, `/log`, `/learn [youtube url]`, `/analyze_threads @username или URL поста`.
 *   **Интеграции:** Gemini 2.0 Flash, instagrapi, yt-dlp + Whisper, zvonok.com webhook, Google Sheets API (ID: `1nqBnh8WCEyb9i5B_kt9YmSkQLoBOY-pSnwqE3CJNUuo`), Telegram Bot API.
 *   **Память:** Трехслойная система (`/root/brain/memory/`, `/root/brain/daily/`, `CLAUDE.md`).
