@@ -1,4 +1,4 @@
-### Статус: 26.05.2026 08:00
+### Статус: 26.05.2026 22:00
 ```markdown
 # Roamaid Second Brain — Сжатый системный контекст
 
@@ -9,7 +9,7 @@
 *   **Серверы:** Social Analyzer API (150.241.116.28:8000), Telegram бот + все агенты (2.27.36.182).
 *   **Основные компоненты:** Telegram бот (`/root/bot.py`), аудит Instagram (`/root/audit_agent.py`).
 *   **Скиллы:** Анализ роликов/аккаунтов/сайтов (Instagram/YouTube), генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), обучение из видео.
-    *   **Недавно завершены (✅):** Анализ вирусных тредов (`/analyze_threads`) и публикация в Threads (`/root/skills/post_to_threads/`), оба требуют THREADS_USERNAME/PASSWORD.
+    *   **Недавно завершены (✅):** Анализ вирусных тредов (`/analyze_threads`) и публикация в Threads (`/root/skills/post_to_threads/`), оба требуют THREADS_USERNAME/PASSWORD в окружении.
 *   **Команды бота:** `/audit @username`, `/audit_sites`, `/stats`, `/log`, `/learn [url]`, `/analyze_threads [@username/URL]`.
 *   **Интеграции:** Gemini 2.0 Flash, instagrapi, yt-dlp + Whisper, zvonok.com webhook, Google Sheets API (ID: `1nqBnh8WCEyb9i5B_kt9YmSkQLoBOY-pSnwqE3CJNUuo`), Telegram Bot API.
 *   **Память:** Трехслойная архитектура: `/root/brain/memory/` (факты), `/root/brain/daily/` (ежедневные заметки), `/root/roamaid_second_brain/CLAUDE.md` (системный контекст).
