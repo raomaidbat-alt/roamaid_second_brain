@@ -1,4 +1,4 @@
-### Статус: 26.05.2026 02:00
+### Статус: 26.05.2026 04:00
 ```markdown
 # Roamaid Second Brain — Сжатый системный контекст
 
@@ -12,7 +12,7 @@
     *   **Недавно завершены (✅):** Анализ вирусных тредов (`/analyze_threads`) и публикация в Threads (`/root/skills/post_to_threads/`), оба требуют THREADS_USERNAME/PASSWORD.
 *   **Команды бота:** `/audit @username`, `/audit_sites`, `/stats`, `/log`, `/learn [url]`, `/analyze_threads [@username/URL]`.
 *   **Интеграции:** Gemini 2.0 Flash, instagrapi, yt-dlp + Whisper, zvonok.com webhook, Google Sheets API (ID: `1nqBnh8WCEyb9i5B_kt9YmSkQLoBOY-pSnwqE3CJNUuo`), Telegram Bot API.
-*   **Память:** Трехслойная архитектура: `/root/brain/memory/` (факты), `/root/brain/daily/` (ежедневные заметки), `/root/roamaid_second_brain/CLAUDE.md` (системный контекст, этот файл).
+*   **Память:** Трехслойная архитектура: `/root/brain/memory/` (факты), `/root/brain/daily/` (ежедневные заметки), `/root/roamaid_second_brain/CLAUDE.md` (системный контекст).
 *   **Правила работы:** Чтение `CLAUDE.md` при старте, `git commit + push`, логирование действий, защита `.env`.
 
 ## Что сломано
@@ -28,7 +28,7 @@
     *   `2.27.36.182` (Telegram бот + агенты)
 *   **Файлы/Директории:**
     *   `/root/bot.py`, `/root/audit_agent.py`
-    *   `/root/skills/` (все скиллы, включая `/analyze_reel/`, `/generate_thread/`, `/audit_account/`, `/audit_website/`, `/learn_from_video/`, `/analyze_threads/`, `/post_to_threads/`)
+    *   `/root/skills/` (все скиллы)
     *   `/root/brain/` (система памяти)
     *   `/root/roamaid_second_brain/CLAUDE.md` (системный контекст и правила)
     *   `.env` (секреты окружения)
