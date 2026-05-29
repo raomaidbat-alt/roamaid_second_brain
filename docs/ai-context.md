@@ -1,4 +1,5 @@
-### Статус: 29.05.2026 00:00
+### Статус: 29.05.2026 06:00
+```markdown
 # Roamaid Second Brain — Сжатый системный контекст
 
 Ты AI-агент Roamaid Second Brain для роста в соцсетях, управляемый исключительно через Telegram.
@@ -32,6 +33,7 @@
     *   `/root/roamaid_second_brain/CLAUDE.md` (системный контекст)
     *   `.env` (секреты окружения)
     *   Google Sheets ID: `1nqBnh8WCEyb9i5B_kt9YmSkQLoBOY-pSnwqE3CJNUuo`
+```
 
 ---
 *Автосжатие через Gemini*
