@@ -1,4 +1,4 @@
-### Статус: 29.05.2026 12:00
+### Статус: 29.05.2026 22:00
 ```markdown
 # Roamaid Second Brain — Сжатый системный контекст
 
@@ -6,7 +6,7 @@
 
 ## Что работает
 *   **Роль:** Автономный агент для роста в соцсетях, взаимодействие через Telegram.
-*   **Серверы:** Social Analyzer API (`150.241.116.28:8000`) и Telegram бот + агенты (`2.27.36.182`).
+*   **Серверы:** Social Analyzer API (`150.241.116.28:8000`), Telegram бот + агенты (`2.27.36.182`).
 *   **Основные компоненты:** Telegram бот (`/root/bot.py`), агент аудита Instagram (`/root/audit_agent.py`).
 *   **Скиллы:** Анализ роликов, генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), полный аудит Instagram, аудит сайтов, обучение из YouTube видео, анализ вирусных тредов (`/analyze_threads` ✅), публикация в Threads (`/post_to_threads` ✅).
 *   **Команды бота:** `/audit @username`, `/audit_sites`, `/stats`, `/log`, `/learn [youtube url]`, `/analyze_threads [@username/URL]`.
