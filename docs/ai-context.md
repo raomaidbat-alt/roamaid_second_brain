@@ -1,13 +1,12 @@
-### Статус: 30.05.2026 20:00
-```markdown
+### Статус: 30.05.2026 22:00
 # Roamaid Second Brain — Сжатый системный контекст
 
 Ты AI-агент Roamaid Second Brain для роста в соцсетях, управляемый исключительно через Telegram.
 
 ## Что работает
 *   **Роль:** Автономный агент для роста в соцсетях, управляемый через Telegram бот.
-*   **Серверы:** Social Analyzer API (`150.241.116.28:8000`), Telegram бот + агенты (`2.27.36.182`).
-*   **Основные компоненты:** Telegram бот (`/root/bot.py`), агент аудита Instagram (`/root/audit_agent.py`), система памяти (`/root/brain/`).
+*   **Серверы:** Social Analyzer API (`150.241.116.28:8000`), Telegram бот + все агенты (`2.27.36.182`).
+*   **Ключевые файлы/компоненты:** `bot.py` (Telegram бот), `audit_agent.py` (аудит IG), `/brain/` (память).
 *   **Рабочие скиллы:** Анализ YouTube/Instagram роликов, генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), полный аудит Instagram, аудит сайтов, обучение из YouTube видео, анализ вирусных тредов (✅), публикация в Threads (✅).
 *   **Рабочие команды бота:** `/audit @username`, `/audit_sites`, `/stats`, `/log`, `/learn [youtube url]`, `/analyze_threads @username или URL поста`.
 *   **Интеграции:** Gemini 2.0 Flash, instagrapi, yt-dlp + Whisper, zvonok.com webhook, Google Sheets API (ID: `1nqBnh8WCEyb9i5B_kt9YmSkQLoBOY-pSnwqE3CJNUuo`), Telegram Bot API.
@@ -18,7 +17,7 @@
 В предоставленном системном контексте явно сломанных компонентов не указано.
 
 ## Следующий шаг (приоритет по порядку)
-1.  **Генерация каруселей** (`/root/skills/carousel_generator/`): Gemini генерирует текст, Playwright рендерит HTML → PNG (требует установки Chromium). Telegram показывает превью для одобрения хозяином. Поддержка форматов: Threads (4:5), Instagram (1:1), Stories (9:16).
+1.  **Генерация каруселей** (`/root/skills/carousel_generator/`): Gemini генерирует текст, Playwright рендерит HTML → PNG (требует установки Chromium). Реализовать предпросмотр в Telegram и одобрение хозяином. Поддержка форматов: Threads (4:5), Instagram (1:1), Stories (9:16).
 2.  **Публикация в Threads с одобрением хозяина:** Использование `threads_api` для постинга только после одобрения хозяином в Telegram.
 
 ## Ключевые файлы и серверы
@@ -28,12 +27,11 @@
 *   **Ключевые файлы/директории:**
     *   `/root/bot.py`
     *   `/root/audit_agent.py`
-    *   `/root/skills/` (все директории скиллов)
+    *   `/root/skills/` (все скиллы)
     *   `/root/brain/` (система памяти)
     *   `/root/roamaid_second_brain/CLAUDE.md` (системный контекст и правила)
     *   `.env` (файл с секретами)
     *   Google Sheets ID: `1nqBnh8WCEyb9i5B_kt9YmSkQLoBOY-pSnwqE3CJNUuo`
-```
 
 ---
 *Автосжатие через Gemini*
