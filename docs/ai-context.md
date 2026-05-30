@@ -1,4 +1,6 @@
-### Статус: 30.05.2026 14:00
+### Статус: 30.05.2026 16:00
+```markdown
+### Статус: 30.05.2024 14:00
 ```markdown
 # Roamaid Second Brain — Сжатый системный контекст
 
@@ -33,6 +35,7 @@
     *   `/root/roamaid_second_brain/CLAUDE.md` (системный контекст и правила)
     *   `.env` (файл с секретами)
     *   Google Sheets ID: `1nqBnh8WCEyb9i5B_kt9YmSkQLoBOY-pSnwqE3CJNUuo`
+```
 ```
 
 ---
