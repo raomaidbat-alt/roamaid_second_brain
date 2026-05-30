@@ -1,4 +1,4 @@
-### Статус: 30.05.2026 23:00
+### Статус: 31.05.2026 00:00
 ```markdown
 # Roamaid Second Brain — Сжатый системный контекст
 
@@ -7,12 +7,12 @@
 ## Что работает
 *   **Роль:** Автономный агент для роста в соцсетях, управляемый через Telegram бот.
 *   **Серверы:** Social Analyzer API (`150.241.116.28:8000`), Telegram бот + все агенты (`2.27.36.182`).
-*   **Ключевые файлы/компоненты:** `bot.py` (Telegram бот), `audit_agent.py` (аудит IG), `/brain/` (память).
-*   **Рабочие скиллы:** Анализ YouTube/Instagram роликов, генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ), полный аудит Instagram, аудит сайтов, обучение из YouTube видео, анализ вирусных тредов (✅), публикация в Threads (✅).
+*   **Ключевые файлы/компоненты:** `bot.py` (Telegram бот), `audit_agent.py` (аудит Instagram аккаунтов), `/brain/` (память системы).
+*   **Рабочие скиллы:** Анализ YouTube/Instagram роликов (`skills/analyze_reel/`), генерация тредов (ПАРАДОКС/ЦИФРЫ/БОЛЬ, `skills/generate_thread/`), полный аудит Instagram (`skills/audit_account/`), аудит сайтов (`skills/audit_website/`), обучение из YouTube видео (`skills/learn_from_video/`), **анализ вирусных тредов** (`skills/analyze_threads/`), **публикация в Threads** (`skills/post_to_threads/`).
 *   **Рабочие команды бота:** `/audit @username`, `/audit_sites`, `/stats`, `/log`, `/learn [youtube url]`, `/analyze_threads @username или URL поста`.
 *   **Интеграции:** Gemini 2.0 Flash, instagrapi, yt-dlp + Whisper, zvonok.com webhook, Google Sheets API (ID: `1nqBnh8WCEyb9i5B_kt9YmSkQLoBOY-pSnwqE3CJNUuo`), Telegram Bot API.
 *   **Память:** Трехслойная архитектура (`/root/brain/memory/`, `/root/brain/daily/`, `/root/roamaid_second_brain/CLAUDE.md`).
-*   **Правила работы:** Чтение `CLAUDE.md` при старте, `git commit + push`, логирование, защита `.env`.
+*   **Правила работы:** Чтение `CLAUDE.md` при старте, `git commit + push` после изменений, логирование важных действий, защита `.env` файла.
 
 ## Что сломано
 В предоставленном системном контексте явно сломанных компонентов не указано.
