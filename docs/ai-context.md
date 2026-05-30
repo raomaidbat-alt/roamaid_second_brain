@@ -1,4 +1,4 @@
-### Статус: 30.05.2026 12:00
+### Статус: 30.05.2026 14:00
 ```markdown
 # Roamaid Second Brain — Сжатый системный контекст
 
@@ -8,7 +8,7 @@
 *   **Роль:** Автономный агент для роста в соцсетях, взаимодействие через Telegram-бот.
 *   **Серверы:** Social Analyzer API (`150.241.116.28:8000`), Telegram бот + все агенты (`2.27.36.182`).
 *   **Основные компоненты:** Telegram бот (`/root/bot.py`), агент аудита Instagram (`/root/audit_agent.py`), система памяти (`/root/brain/`).
-*   **Рабочие скиллы:** Анализ YouTube/Instagram роликов (`/root/skills/analyze_reel/`), генерация тредов (`/root/skills/generate_thread/`), полный аудит Instagram (`/root/skills/audit_account/`), аудит сайтов (`/root/skills/audit_website/`), обучение из YouTube видео (`/root/skills/learn_from_video/`), анализ вирусных тредов (✅ `/root/skills/analyze_threads/`), публикация в Threads (✅ `/root/skills/post_to_threads/`).
+*   **Рабочие скиллы:** Анализ YouTube/Instagram роликов, генерация тредов, полный аудит Instagram, аудит сайтов, обучение из YouTube видео, анализ вирусных тредов (✅ `/root/skills/analyze_threads/`), публикация в Threads (✅ `/root/skills/post_to_threads/`).
 *   **Рабочие команды бота:** `/audit @username`, `/audit_sites`, `/stats`, `/log`, `/learn [youtube url]`, `/analyze_threads @username или URL поста`.
 *   **Интеграции:** Gemini 2.0 Flash, instagrapi, yt-dlp + Whisper, zvonok.com webhook, Google Sheets API (ID: `1nqBnh8WCEyb9i5B_kt9YmSkQLoBOY-pSnwqE3CJNUuo`, листы: Аккаунты, CRM, Ролики, Активность, Сайты, Сайты-список), Telegram Bot API.
 *   **Память:** Трехслойная архитектура (`/root/brain/memory/`, `/root/brain/daily/`, `/root/roamaid_second_brain/CLAUDE.md`).
